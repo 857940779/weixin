@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/simple_css :: head"></head>
+<title>中移运营支撑系统-用户中心</title>
+<body class="no-skin">
+
+
+		<div class="main-container ace-save-state" id="main-container">
+			<script type="text/javascript">
+				try{ace.settings.loadState('main-container')}catch(e){}
+			</script>
+
+			<div class="main-content">
+				<div class="main-content-inner">
+
+					<div class="page-content">
+						<div class="row">
+							<div class="col-xs-12">
+
+
+								<div class="hr dotted"></div>
+
+								<div>
+									<div id="user-profile-1" class="user-profile row">
+										<div class="col-xs-12 col-sm-3 center">
+											<div>
+												<span class="profile-picture">
+													<img id="avatar" class="editable img-responsive" alt="Alex's Avatar" src="/bootstrap/avatars/profile-pic.jpg" />
+												</span>
+
+												<div class="space-4"></div>
+
+												<div class="width-80 label label-info label-xlg arrowed-in arrowed-in-right">
+													<div class="inline position-relative">
+														<a href="#" class="user-title-label dropdown-toggle" data-toggle="dropdown">
+															<i class="ace-icon fa fa-circle light-green"></i>
+															&nbsp;
+															<span class="white" name="username"></span>
+														</a>
+													</div>
+												</div>
+											</div>
+
+											<div class="space-6"></div>
+
+											<div class="hr hr12 dotted"></div>
+
+
+											<div class="hr hr16 dotted"></div>
+										</div>
+
+										<div class="col-xs-12 col-sm-9">
+
+											<div class="widget-toolbar no-border">
+												<button class="btn btn-xs btn-info" onClick="editUser();">
+													<i class="ace-icon fa fa-search icon-on-left"></i>修改
+												</button>
+											</div>
+											<div class="space-12"></div>
+
+											<div class="profile-user-info profile-user-info-striped">
+												<div class="profile-info-row">
+													<div class="profile-info-name"> 用户名 </div>
+
+													<div class="profile-info-value">
+														<span class="editable" id="username" name="username"></span>
+													</div>
+												</div>
+
+												<div class="profile-info-row">
+													<div class="profile-info-name"> 昵称 </div>
+
+													<div class="profile-info-value">
+														<span class="editable" id="nickname" name="nickname"></span>
+													</div>
+												</div>
+
+												<div class="profile-info-row">
+													<div class="profile-info-name"> 电话 </div>
+
+													<div class="profile-info-value">
+														<span class="editable" id="mobile" name="mobile"></span>
+													</div>
+												</div>
+
+												<div class="profile-info-row">
+													<div class="profile-info-name"> 邮箱 </div>
+
+													<div class="profile-info-value">
+														<span class="editable" id="email" name="email"></span>
+													</div>
+												</div>
+
+												<div class="profile-info-row">
+													<div class="profile-info-name"> 公司 </div>
+
+													<div class="profile-info-value">
+														<span class="editable" id="companyId" name="companyId"></span>
+													</div>
+												</div>
+
+												<div class="profile-info-row">
+													<div class="profile-info-name"> 部门 </div>
+
+													<div class="profile-info-value">
+														<span class="editable" id="departmentId" name="departmentId"></span>
+													</div>
+												</div>
+											</div>
+
+											<div class="space-20"></div>
+
+
+											<div class="hr hr2 hr-double"></div>
+
+											<div class="space-6"></div>
+
+										</div>
+									</div>
+								</div>
+
+
+								<!-- PAGE CONTENT ENDS -->
+							</div><!-- /.col -->
+						</div><!-- /.row -->
+					</div><!-- /.page-content -->
+				</div>
+			</div><!-- /.main-content -->
+			<!-- 弹框 -->
+			<div id="modal-form" class="modal" tabindex="-1">
+				<div class="modal-dialog" style="width:500px;">
+					<div class="modal-content" >
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title center blue">用户信息</h4>
+						</div>
+
+						<div class="modal-body">
+							<form id="dataform" class="form-horizontal" method="post" >
+								<!-- #section:elements.form -->
+								<input type="hidden" id="id" name="id" value="" />
+								<div class="form-group">
+									<div class="control-label col-xs-12 col-sm-3 no-padding-right" for="name">帐号</div>
+									<div class="col-xs-12 col-sm-9">
+										<div class="clearfix">
+											<input readonly="" type="text"  name="username" value="" id="form-input-readonly"  class="col-xs-12 col-sm-8" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="control-label col-xs-12 col-sm-3 no-padding-right" for="userid">姓名</div>
+									<div class="col-xs-12 col-sm-9">
+										<div class="clearfix">
+											<input type="text"  name="nickname" value="" required="required" placeholder="成员唯一标识，不可更改，不支持中文" class="col-xs-12 col-sm-8" />
+										</div>
+									</div>
+								</div>
+								<div class="hr hr-dotted"></div>
+								<div class="form-group">
+									<div class="control-label col-xs-12 col-sm-3 no-padding-right" for="mobile">手机</div>
+									<div class="col-xs-12 col-sm-9">
+										<div class="clearfix">
+											<input type="tel"   name="mobile" value="" class="col-xs-12 col-sm-8" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="control-label col-xs-12 col-sm-3 no-padding-right" for="email">邮箱</div>
+									<div class="col-xs-12 col-sm-9">
+										<div class="clearfix">
+											<input type="text"  name="email" value="" placeholder="邮箱" class="col-xs-12 col-sm-8" />
+										</div>
+									</div>
+								</div>
+
+
+							</form>
+						</div>
+
+						<div class="modal-footer">
+							<button class="btn btn-sm" data-dismiss="modal">
+								<i class="ace-icon fa fa-times"></i>
+								取消
+							</button>
+
+							<button class="btn btn-sm btn-primary" id="btnsave" onclick="doSave();">
+								<i class="ace-icon fa fa-check"></i>
+								保存
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ／弹框 -->
+
+		</div><!-- /.main-container -->
+
+		<div th:include="common/simple_js :: simpleJS" ></div>
+
+		<!-- inline scripts related to this page -->
+		<script type="text/javascript">
+			jQuery(function($) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": "/user/getuser",
+                    "data":$('#dataform').serialize(),
+                    "success": function(data){
+                        var json = eval(data);
+                        if(json.status=="SUCCESS"){
+                            var user = json.data;
+                            for(var item in user){
+                                $("span[name=" + item + "]").html(user[item]);
+                                $("input[name=" + item + "]").val(user[item]);
+                            }
+                        }
+                    }
+                });
+
+			});
+			function editUser() {
+                $('#modal-form').modal('show');
+            }
+		</script>
+	</body>
+</html>

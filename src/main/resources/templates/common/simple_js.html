@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="simpleJS">
+    <!-- /.main-container -->
+    <script th:src="@{/bootstrap/js/jquery.js}"></script>
+    <script th:src="@{/bootstrap/js/jquery.mobile.custom.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+    <script th:src="@{/bootstrap/js/bootbox.js}"></script>
+    <!--[if lte IE 8]>
+    <![endif]-->
+    <script th:src="@{/bootstrap/js/jquery.validate.js}"></script>
+    <script th:src="@{/bootstrap/js/jquery.validate.ext.js}"></script>
+
+
+
+    <script th:src="@{/bootstrap/js/jquery-ui.custom.js}"></script>
+
+
+    <!-- page specific plugin scripts -->
+    <!-- ace scripts -->
+    <script th:src="@{/bootstrap/js/ace/ace.js}"></script>
+    <script th:src="@{/bootstrap/js/ace/ace.sidebar.js?v=3}"></script>
+    <script th:src="@{/bootstrap/js/ace/ace.submenu-hover.js}"></script>
+
+    <script th:src="@{/bootstrap/js/autosize.js}"></script>
+
+
+</div>
+</body>

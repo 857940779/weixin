@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/simple_css :: head"></head>
+<title>中移运营支撑系统-用户</title>
+<body class="no-skin">
+    <div class="main-container sub-page-content" id="main-container">
+        <!-- /section:basics/sidebar -->
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="page-content">
+                    <div class="row">
+                        <!-- /.page-header -->
+                        <div class="col-xs-4 col-sm-4 widget-container-col">
+                            <div class="widget-box">
+                                <!-- #section:custom/widget-box.options -->
+                                <div class="widget-header widget-header-flat">
+                                    <h5 class="widget-title">
+                                        <i class="ace-icon fa fa-sitemap bigger-130"></i>字典类别
+                                    </h5>
+
+                                    <div class="widget-toolbar no-border">
+                                        <input type="text" class="input-sm" id="search"
+                                               placeholder="查找..." style="width: 100px"> <span
+                                            style="padding-left: 20px;" data-rel="tooltip"
+                                            data-placement="bottom" title="刷新" onclick="initJsTree();">
+                                                <i class="ace-icon fa fa-refresh bigger-120 "></i>
+                                            </span>
+                                    </div>
+
+                                </div>
+
+                                <!-- /section:custom/widget-box.options -->
+                                <div class="widget-body"
+                                     style="min-height: 450px; max-height: 500px; overflow-y: auto">
+                                    <div class="widget-main">
+                                        <div class="clearfix">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                        <button class="btn btn-xs btn-info"
+                                                                onclick="toCreateDict('createFolter');">
+                                                            <i class="ace-icon fa fa-plus icon-on-left"></i>新增子目录
+                                                        </button>
+                                                        <button class="btn btn-xs btn-info"
+                                                                onclick="toCreateDict('createGroup');">
+                                                            <i class="ace-icon fa fa-plus icon-on-left"></i>新增类别
+                                                        </button>
+                                                        <button class="btn btn-xs btn-info"
+                                                                onclick="toEditDict();">
+                                                            <i class="ace-icon fa fa-edit icon-on-left"></i>修改
+                                                        </button>
+                                                        <button class="btn btn-xs btn-info"
+                                                                onclick="toDeleteDict();">
+                                                            <i class="ace-icon fa fa-trash-o icon-on-left"></i>删除
+                                                        </button>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="hr hr-dotted hr-16"></div>
+                                                    <div id="jstree"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.span -->
+
+                        <!-- /.page-header -->
+                        <div class="col-xs-8 col-sm-8 widget-container-col"
+                             style="padding-left: 0px;">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12">
+
+
+                                    <div class="widget-box">
+                                        <!-- #section:custom/widget-box.options -->
+                                        <div class="widget-header widget-header-flat">
+                                            <h5 class="widget-title">
+                                                <i class="ace-icon fa fa-info bigger-130"></i> 字典数据
+                                            </h5>
+                                            <div class="widget-toolbar no-border"></div>
+                                        </div>
+
+                                        <!-- /section:custom/widget-box.options -->
+                                        <div class="widget-body" style="min-height: 450px;">
+                                            <div class="widget-main">
+                                                <div class="clearfix">
+                                                    <div class="row">
+                                                        <div id="orgInfo" class="col-xs-12"
+                                                             style="padding-left: 10px; padding-right: 10px;"></div>
+                                                    </div>
+
+                                                    <!-- PAGE CONTENT BEGINS -->
+                                                    <div class="row">
+                                                        <div class="col-xs-12 table-scrollable"
+                                                             style="padding-left: 10px; padding-right: 10px;">
+                                                            <h5 id="dictInfo" class="widget-title blue smaller"
+                                                                style="padding-bottom: 10px;"></h5>
+                                                            <table id="simple-table"
+                                                                   class="table table-striped table-bordered table-hover">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>数据名称</th>
+                                                                    <th>数据值</th>
+                                                                    <th>显示顺序</th>
+                                                                    <th>样式</th>
+                                                                    <th>描述</th>
+                                                                    <th>状态</th>
+                                                                    <th>操作</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody id="dictDatas">
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <!-- /.span -->
+                                                    </div>
+                                                    <!-- /.row -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /.row -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 字典类别模态框（Modal） -->
+    <div class="modal fade" id="modal-edit-dict" tabindex="-1"
+         role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="dict-modal-content"></div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-- 字典数据模态框（Modal） -->
+    <div class="modal fade" id="dictionary-data-Modal" tabindex="-1"
+         role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true" style="font-size: 30px">×</button>
+                    <h4 class="modal-title" id="myModalLabel">字典数据编辑</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <form id="dictionaryDataForm" class="form-horizontal" role="form">
+                                <!-- #section:elements.form -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-- 字典类别编辑JS模板 -->
+    <script id="tmpl-edit-dict" type="text/x-jquery-tmpl">
+		<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true" style="font-size: 30px">×</button>
+						{{if dictType == 1}}
+							<h4 class="modal-title" id="myModalLabel">字典目录编辑</h4>
+						{{else dictType == 2}}
+							<h4 class="modal-title" id="myModalLabel">字典类别编辑</h4>
+						{{/if}}
+		</div>
+
+
+		<div class="modal-body">
+			<div class="row">
+				<div class="col-xs-12">
+					<!-- PAGE CONTENT BEGINS -->
+					<form id="dictionaryForm" class="form-horizontal" role="form">
+
+						<div class="space-4"></div>
+
+						<input type="hidden"  name="pid" value="{{= dictPid}}" />
+						<input type="hidden"  name="id" value="{{= dictId}}"/>
+						<input type="hidden"  name="dictType" value="{{= dictType}}"/>
+
+						{{if dictType == 1}}
+                            <input type="hidden" name="dictCode" value="{{= dictId}}"/>
+							<div class="form-group">
+								<div class="col-sm-9">
+								<input type="text"  name="dictName" value="{{= dictName}}"
+									placeholder="分类类别目录名称" class="col-xs-10 col-sm-10" />
+								</div>
+							</div>
+						{{else dictType == 2}}
+							<div class="form-group">
+								<div class="col-sm-9">
+								<input type="text"  name="dictName" value="{{= dictName}}"
+									placeholder="分类类别名称" class="col-xs-10 col-sm-10" />
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-9" id="dictCodeDiv">
+								<input type="text"  name="dictCode" value="{{= dictCode}}"
+									placeholder="分类类别编码" class="col-xs-10 col-sm-10" />
+								</div>
+							</div>
+						{{/if}}
+                        <div class="form-group">
+								<div class="col-sm-9">
+								<input type="text"  name="priority" value="{{= priority}}"
+									placeholder="分类类别优先级" class="col-xs-10 col-sm-10" />
+								</div>
+							</div>
+						<div class="space-4"></div>
+						<div class="clearfix form-actions">
+							<div class="col-md-offset-3 col-md-9">
+								<button class="btn btn-info" type="button"
+									onclick="saveDict();">
+									<i class="ace-icon fa fa-check"></i> 保存
+								</button>
+
+								&nbsp; &nbsp; &nbsp;
+								<button class="btn" type="button"
+									onclick="hideDictionaryModal();">
+									<i class="ace-icon fa fa-undo"></i> 取消
+								</button>
+							</div>
+						</div>
+
+					 </form>
+				</div>
+			</div>
+		</div>
+	</script>
+
+    <!-- 字典类别详细信息JS模板 -->
+    <script id="tmpl-dict" type="text/x-jquery-tmpl">
+		{{if dictType == 2}}
+			&nbsp;&nbsp;&nbsp;<span>字典类别：<b class="green">{{= dictName}}</b></span>
+			&nbsp;&nbsp;&nbsp;<span>字典编码：<b class="green">{{= dictCode}}</b></span>
+
+			<!--
+			<i class="ace-icon fa fa-rss orange"></i> 字典数据列表
+			-->
+				<button class="btn btn-xs btn-info pull-right"
+					style="margin-top: -5px; margin-left: 10px"
+					onclick="toCreateDictionaryData();">
+					<i class="ace-icon fa fa-plus icon-on-left"></i>新增字典数据
+				</button>
+		{{else}}
+			&nbsp;&nbsp;&nbsp;<span>字典类别：<b class="green">{{= dictName}}</b></span>
+		{{/if}}
+
+
+	</script>
+
+    <!-- 字典数据JS模板 -->
+    <script id="tmpl-edit-dictdata" type="text/x-jquery-tmpl">
+
+										<div class="space-4"></div>
+										<input type="hidden"  name="id" value="{{= id}}" />
+												<input type="hidden"  name="dictCode" value="{{= dictCode}}" />
+										<div class="form-group">
+											<div class="col-sm-9">
+
+												<input type="text"  name="dictdataName" placeholder="数据名称" value="{{= dictdataName}}" class="col-xs-10 col-sm-10" />
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-9" >
+												<input type="text"  name="dictdataValue" placeholder="数据值" value="{{= dictdataValue}}" class="col-xs-10 col-sm-10" />
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-9" >
+												<input type="text"  name="tranClass" placeholder="样式" value="{{= tranClass}}" class="col-xs-10 col-sm-10" />
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-9" >
+												<input type="text"  name="priority" placeholder="优先级" value="{{= priority}}" class="col-xs-10 col-sm-10" />
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-9" >
+												<input type="text"  name="dictdataDesc" placeholder="描述" value="{{= priority}}" class="col-xs-10 col-sm-10" />
+											</div>
+										</div>
+										<div class="space-4"></div>
+										<div class="clearfix form-actions">
+											<div class="col-md-offset-3 col-md-9">
+												<button class="btn btn-info" type="button" onclick="saveDictionaryData();">
+													<i class="ace-icon fa fa-check"></i>
+													保存
+												</button>
+
+												&nbsp; &nbsp; &nbsp;
+												<button class="btn" type="button" onclick="hideDictionnaryDataModal();">
+													<i class="ace-icon fa fa-undo"></i>
+													取消
+												</button>
+											</div>
+										</div>
+	</script>
+
+
+    <!-- JS模板 -->
+    <script id="tmpl-dictDatas" type="text/x-jquery-tmpl">
+		{{each(i,data) dictDatas}}
+			<tr class="data-item">
+				<td>{{= data.dictdataName}}</td>
+				<td><a href="#">{{= data.dictdataValue}}</a></td>
+				<td>
+					<span class="badge badge-warning">{{= data.priority}}</span>
+				</td>
+				<td>
+					{{= data.tranClass}}
+				</td>
+				<td><a href="#">{{= data.dictdataDesc}}</a></td>
+				<td>
+					{{if data.available}}
+						<span class="label label-sm label-success">可用</span>
+					{{else}}
+						<span class="label label-sm label-danger">不可用</span>
+					{{/if}}
+				</td>
+				<td>
+					<div class="hidden-sm hidden-xs btn-group">
+						<button class="btn btn-xs btn-warning" data-rel="tooltip" data-placement="top" title="编辑" onclick="toEditDictionaryDataById({{= data.id}},'{{= data.dictCode}}')">
+							<i class="ace-icon fa fa-edit bigger-120"></i>
+						</button>
+							<button class="btn btn-xs btn-danger" data-rel="tooltip" data-placement="top" title="删除" onclick="deleteDictionaryDataById({{= data.id}},'{{= data.dictCode}}')">
+								<i class="ace-icon fa fa-trash-o bigger-120"></i>
+							</button>
+					</div>
+				</td>
+			</tr>
+		{{/each}}
+   </script>
+
+
+    <div th:include="common/simple_js :: simpleJS" ></div>
+    <div th:include="common/tree_js :: treeJS" ></div>
+
+    <script type="text/javascript" th:inline="javascript">
+        var cmdList = /*[[@{/dict/list}]]*/;
+        var cmdSave = /*[[@{/dict/save}]]*/;
+        var cmdQuery = /*[[@{/dict/query}]]*/;
+        var cmdDelete = /*[[@{/dict/delete}]]*/;
+
+        var cmdSave_Data = /*[[@{/dictdata/save}]]*/;
+        var cmdQuery_Data = /*[[@{/dictdata/query}]]*/;
+        var cmdDelete_Data = /*[[@{/dictdata/delete}]]*/;
+
+        $(function() {
+            initJsTree();//初始化字典类别构树
+            bindResizeEvent();//绑定页面resize事件
+        });
+
+        /**
+         * 获取JSTREE对象
+         */
+        function getJsTree() {
+            return $('#jstree').jstree(true);
+        }
+
+        /**  初始化树
+         *      初始化 或者 刷新树时调用
+         */
+        function initJsTree() {
+            $.ajax({
+                url : cmdList,
+                type : 'POST',
+                dataType : 'json',
+                success : function(data) {
+                    var json = eval(data);
+                    if(json.status=="SUCCESS"){
+                        treeConfig(json.data.treeNodes);
+                    } else {
+                        handleAjaxError(data);
+                    }
+                }
+            });
+        }
+
+        /**
+         * JSTREE 树形插件配置
+         */
+        function treeConfig(data) {
+            var tree = getJsTree();
+            if (tree) {
+                tree.destroy();
+            }
+
+            var to = false;
+            //搜索栏事件
+            $('#search').keyup(function() {
+                if (to) {
+                    clearTimeout(to);
+                }
+                to = setTimeout(function() {
+                    var v = $('#search').val();
+                    $('#jstree').jstree(true).search(v);
+                }, 250);
+            });
+
+            var $jstree = $('#jstree')
+                .jstree(
+                    {
+                        "core" : {
+                            "animation" : 0,
+                            "check_callback" : true,
+                            "data" : data
+                            //'data' : data  一次性加载
+                            /** 'data' : {   异步逐级加载
+								    'url' : function (node) {
+								      return node.id === '#' ?
+								        'ajax_roots.json' :
+								        'ajax_children.json';
+								    },
+								    'data' : function (node) {
+								      return { 'id' : node.id };
+								    }
+								 }**/
+                        },
+                        /**'force_text' : true,**/
+                        'themes' : {
+                            'responsive' : false,
+                            'variant' : 'large',
+                            'stripes' : true
+                        },
+                        "types" : {
+                            "#" : {
+                                "max_depth" : 4,
+                                "valid_children" : [ "0", "1", "2" ]
+                            },
+                            "1" : {
+                                "icon" : "ace-icon fa fa-folder bigger-120 blue"
+                            },
+                            "2" : {
+                                "icon" : "ace-icon fa fa-leaf bigger-130 green"
+                            },
+                            "0" : {
+                                "icon" : "ace-icon fa fa-home bigger-150 blue"
+                            },
+                            "default" : {
+                                "icon" : "ace-icon fa fa-file icon-lg blue"
+                            },
+                            "file" : {
+                                "icon" : "ace-icon fa fa-file icon-lg blue"
+                            }
+                        },
+                        "plugins" : [ "contextmenu", "search",
+                            "unique", "conditionalselect", "state",
+                            "types", "changed"
+                            // "wholerow", "dnd"  这两种插件可以不要,checkbox可以使用
+                        ],
+                        "conditionalselect" : function(node, event) {
+                            return true;
+                        },
+                        "contextmenu" : {
+                            "items" : {
+                                "create" : null,
+                                "rename" : null,
+                                "remove" : null,
+                                "ccp" : null,
+                                "add1" : {
+                                    "label" : "新增子目录",
+                                    "icon" : "ace-icon fa fa-folder bigger orange",
+                                    "_disabled" : false,
+                                    "separator_before" : false,
+                                    "separator_after" : false,
+                                    "action" : function(obj) {
+                                        toCreateDict("createFolter");
+                                    }
+                                },
+                                "add" : {
+                                    "label" : "新增字典类别",
+                                    "icon" : "ace-icon fa fa-leaf bigger blue",
+                                    "_disabled" : false,
+                                    "separator_before" : false,
+                                    "separator_after" : false,
+                                    "action" : function(obj) {
+                                        toCreateDict("createGroup");
+                                    }
+                                },
+                                "edit" : {
+                                    "label" : "修改",
+                                    "_disabled" : false,
+                                    "separator_before" : true,
+                                    "separator_after" : false,
+                                    "icon" : "ace-icon fa fa-edit icon-lg yellow",
+                                    "action" : function(obj) {
+                                        toEditDict();
+                                    }
+                                },
+                                "delete" : {
+                                    "label" : "删除",
+                                    "_disabled" : false,
+                                    "separator_before" : true,
+                                    "separator_after" : false,
+                                    "icon" : "ace-icon fa fa-trash-o icon-lg red2",
+                                    "action" : function(obj) {
+                                        toDeleteDict();
+                                    }
+                                }
+
+                            }
+                        }
+                    });
+
+            $jstree.on("changed.jstree", function(e, data) {
+                var action = data.action;
+                if (action == "select_node") {
+                    var dictCode = data.node.original.fasDatas.dictCode;
+                    //loadDictionaryData(data.node.id);
+                    loadDictionaryData(dictCode);
+                }
+
+            }).on("show_contextmenu.jstree", function(e, data) {
+                var dictType = data.node.type;
+                if (dictType == 2) {
+                    //$(".jstree-contextmenu").find("li:first").addClass("vakata-contextmenu-disabled");
+                    $(".jstree-contextmenu").find("li:lt(2)").hide();
+                } else if (dictType == 0) {
+                    $(".jstree-contextmenu").find("li:gt(1)").hide();
+                }
+
+            });
+        }
+
+        /**
+         * 加载字典类别下的字典数据
+         * dictCode: 字典类别编码
+         *            当点击类别树节点时加载
+         */
+        function loadDictionaryData(dictCode) {
+            $.ajax({
+                url : cmdQuery,
+                type : 'POST',
+                data:{"dictCode":dictCode},
+                dataType : 'json',
+                success : function(data) {
+                    var json = eval(data);
+                    if (json.status=="SUCCESS") {
+                        if (json.data.group) {
+                            var $dict = $("#tmpl-dict").tmpl(json.data.group);
+                            $('#dictInfo').html($dict);
+                        }
+                        if (json.data.dictDatas) {
+                            var $dictDatas = $("#tmpl-dictDatas").tmpl(json.data);
+                            $('#dictDatas').html($dictDatas);
+                        }
+
+                        $('[data-rel=tooltip]').tooltip();
+
+                    } else {
+                        handleAjaxError(data);
+                    }
+                }
+            });
+
+        }
+
+        /**
+         * 预处理- 创建子目录/类别
+         *
+         *   当点击“新增子目录”、“类别”按钮 或者右键菜单“新增子目录”、“类别”
+         */
+        function toCreateDict(oper) {
+            var ref = $('#jstree').jstree(true);
+
+            //获取选中节点ID数组
+            var sel = ref.get_selected();
+            if (!sel.length) {
+                return false;
+            }
+            var node = ref.get_node(sel[0]);
+            var nodeType = node.type;
+            //校验1
+            if (nodeType == '2') {
+                top.bootbox.alert("类别下面不能添加子目录/类别 ");
+                return false;
+            }
+            //校验2 目录层级校验（最多允许三级）
+            if (node.parents.length >= 3) {
+                top.bootbox.alert("新增失败! 最多允许三级分类");
+                return false;
+            }
+            showDictionaryModal(oper);
+        };
+
+        /**
+         * 保存字典分类
+         *    当点击字典类别弹出窗口“保存”按钮
+         *
+         */
+        function saveDict() {
+            var ref = $('#jstree').jstree(true);
+            var sel = ref.get_selected();
+
+            if (!$("#dictionaryForm").valid()) {
+                return false;
+            }
+            var nowdata = $('#dictionaryForm').serializeObject();
+            $.ajax({
+                "dataType" : 'json',
+                "type" : "POST",
+                "url" : cmdSave,
+                "data" : $('#dictionaryForm').serialize(),
+                "success" : function(data) {
+                    var json = eval(data);
+                    if (json.status=="SUCCESS") {
+                        sel = sel[0];
+                        var node = ref.get_node(sel);
+                        if (nowdata['id']) { //修改
+                            ref.rename_node(node, json.data.text);
+                            node.text = json.data.text;
+                            node.original.fasDatas.dictCode = json.data.fasDatas.dictCode;
+                            node.original.fasDatas.priority = json.data.fasDatas.priority;
+                            ref.refresh_node (node);
+                        } else { //创建
+                            var newNode = json.data;
+                            ref.create_node(sel, newNode);
+                        }
+
+                        var dictCode = node.original.fasDatas.dictCode;
+                        loadDictionaryData(dictCode);
+                        hideDictionaryModal();
+                    } else {
+                        handleAjaxError(data);
+                    }
+                }
+            });
+        }
+
+        /**
+         * 预处理-删除字典类别
+         *    1) 是否选中校验
+         *    2) 是否根节点校验
+         *    3) 是否存在字典数据校验
+         */
+        function toDeleteDict() {
+            var ref = getJsTree();
+            var node = getSelectedOrgNode();
+            if (!node) {
+                return false;
+            }
+
+            //根节点不允许删除
+            if (node.type == 0) {
+                top.bootbox.alert("根节点不允许删除 .");
+                return false;
+            } else if (node.type == 1) {//字典分类目录
+                if (ref.is_parent(node)) {
+                    top.bootbox.alert("删除失败！ 存在子节点,请先删除子节点.");
+                } else {
+                    doDeleteDict();
+                }
+
+            } else if (node.type == 2) {//字典类别
+
+                if ($(".data-item").length) {
+                    top.bootbox.confirm("该类型存在数据，确定要删除?", function(result) {
+                        if (result) {
+                            doDeleteDict();
+                        }
+                    });
+                } else {
+                    top.bootbox.confirm("确定要删除?", function(result) {
+                        if (result) {
+                            doDeleteDict();
+                        }
+                    });
+                }
+            }
+        };
+
+        /**
+         * 预处理-编辑字典类别
+         *
+         *  1) 是否选中校验
+         *  2) 是否根节点校验
+         */
+        function toEditDict() {
+            var node = getSelectedOrgNode();
+            if (!node) {
+                return false;
+            }
+
+            //根节点不允许删除
+            if (node.type == 0) {
+                top.bootbox.alert("根节点不允许编辑 .");
+                return false;
+            }
+            showDictionaryModal("edit");
+        };
+
+        /**
+         * 调用后台删除字典类别
+         *
+         */
+        function doDeleteDict() {
+            var ref = $('#jstree').jstree(true);
+            //获取选中节点ID数组
+            var sel = ref.get_selected();
+            if (!sel.length) {
+                return false;
+            }
+            $.ajax({
+                type : 'POST',
+                url : cmdDelete,
+                data:{"id": sel[0]},
+                dataType : "json",
+                success : function(data) {
+                    var json = eval(data);
+                    if (json.status=="SUCCESS") {
+                        ref.delete_node(sel);
+                        clearDictDatasTbody();
+                    } else {
+                        handleAjaxError(data);
+                    }
+                }
+            });
+        }
+
+        /**
+         * 重置字典类别Form
+         */
+        function resetDictionaryModal() {
+            $("#dictCodeDiv").hide();
+        }
+
+        /**
+         *隐藏字典类别（目录类型）弹出窗口
+         */
+        function hideDictionaryModal() {
+            $('#dictionaryForm')[0].reset();
+            $('#modal-edit-dict').modal('hide');
+        }
+
+        /**
+         *清空字典数据列表数据
+         */
+        function clearDictDatasTbody() {
+            $('#dictDatas').html("");
+        }
+
+        /**
+         * 初始化字典类别表单校验规则器
+         *		弹出字典类别编辑窗口前调用
+         *  1) oper : createFolter (字典目录)| createGroup （字典列表）
+         *     如果是目录则code可以为空
+         */
+        function initDictFormValidator(oper) {
+            var requiredCode = true;
+            if (oper == 'createFolter')
+                requiredCode = false;
+
+            $('#dictionaryForm').validate({
+                rules : {
+                    'pid' : {
+                        required : true
+                    },
+                    'dictName' : {
+                        required : true,
+                        maxlength : 20
+                    },
+                    'dictCode' : {
+                        required : requiredCode,
+                        maxlength : 20
+                    },
+                    'dictType' : {
+                        required : true
+                    }
+                }
+            });
+        }
+
+        /**
+         * 显示字典类别弹出框
+         *
+         *  oper: 操作类型 ｛edit | createFolter| createGroup｝
+         *
+         *
+         */
+        function showDictionaryModal(oper) {
+            var ref = $('#jstree').jstree(true);
+            var sel = ref.get_selected();
+            if (!sel.length) {
+                return false;
+            }
+            sel = sel[0];
+            resetDictionaryModal();
+
+            var node = ref.get_node(sel);
+            var dictType = node.type;
+            var dictCode = node.original.fasDatas.dictCode;
+            var dictName = node.text;
+            var priority = node.original.fasDatas.priority;
+            var dictPid = node.parent;
+            var data = {};
+            if (oper == 'edit') {//编辑
+                data = {
+                    dictId : sel,
+                    dictCode : dictCode,
+                    dictName : dictName,
+                    dictType : dictType,
+                    priority : priority,
+                    dictPid : dictPid
+                }
+                if (dictType == 2) {
+                    $("#dictCodeDiv").show();
+                }
+            } else if (oper == 'createFolter') {//创建字典类别目录
+                data = {
+                    dictName : "",
+                    dictType : 1,
+                    dictPid : sel
+                }
+            } else if (oper == 'createGroup') {//创建字典类别
+                data = {
+                    dictName : "",
+                    dictType : 2,
+                    dictPid : sel
+                }
+                $("#dictCodeDiv").show();
+            }
+
+            var $dictHtml = $("#tmpl-edit-dict").tmpl(data);
+            $('#dict-modal-content').html($dictHtml);
+
+            //初始化表单校验
+            initDictFormValidator(oper);
+
+            //弹出新增窗口
+            $('#modal-edit-dict').modal({
+                keyboard : true
+            });
+        }
+
+        /**
+         * 获取当前选中的机构节点
+         */
+        function getSelectedOrgNode() {
+            var ref = getJsTree();
+            var sel = ref.get_selected();
+            if (!sel.length) {
+                top.bootbox.alert("请先选择一个节点");
+                return false;
+            }
+            sel = sel[0];
+            return ref.get_node(sel);
+        }
+
+
+
+
+        /**
+         * 删除字典数据
+         *   id:  字典数据ID
+         *   dictCode: 字典数据所属字典类别编码
+         */
+        function deleteDictionaryDataById(id, dictCode) {
+            top.bootbox.confirm("确定要删除? 删除后可能影响程序正常运行！请确认记录未关联使用.", function(
+                result) {
+                if (result) {
+                    $.ajax({
+                        type : 'POST',
+                        url : cmdDelete_Data,
+                        data:{"id": id},
+                        dataType : "json",
+                        success : function(data) {
+                            var json = eval(data);
+                            if (json.status=="SUCCESS") {
+                                loadDictionaryData(dictCode);
+                            } else {
+                                handleAjaxError(data);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        /**
+         *隐藏字典数据编辑窗口
+         */
+        function hideDictionnaryDataModal() {
+            $('#dictionaryDataForm')[0].reset();
+            $('#dictionary-data-Modal').modal('hide');
+        }
+
+        /**
+         * 弹出字典数据编辑窗口
+         */
+        function showDictionnaryDataModal() {
+            $('#dictionary-data-Modal').modal({
+                keyboard : true
+            });
+        }
+
+        /**
+         * 预处理-字典数据新增
+         *      当点击"新增字典数据"按钮时调用
+         *  1) 是否选中校验
+         *  2) 构造模版初始化JSON对象
+         *  3) JS模版生成HTML
+         *  4) 初始化表单校验
+         *  5) 弹出字典数据编辑窗口
+         */
+        function toCreateDictionaryData() {
+            $("#dictionaryDataForm")[0].reset();
+
+            var node = getSelectedOrgNode();
+            if (!node) {
+                return false;
+            }
+
+            var dictCode = node.original.fasDatas.dictCode;
+            var data = {
+                "dictCode" : dictCode
+            };
+
+            var $dictDataHtml = $("#tmpl-edit-dictdata").tmpl(data);
+            $('#dictionaryDataForm').html($dictDataHtml);
+
+            initDictDataFormValidator();
+            showDictionnaryDataModal();
+        }
+
+        /**
+         * 预处理-字典数据修改
+         *   id:  字典数据ID
+         *   dictCode: 字典数据所属字典类别编码
+         *
+         *   1) 根据ID查询字典数据
+         *   2) 初始化表单校验器
+         *   3) 弹出编辑窗口
+         */
+        function toEditDictionaryDataById(id, dictCode) {
+            $.ajax({
+                "dataType" : 'json',
+                "type" : "POST",
+                "url" : cmdQuery_Data,
+                "data": {"id": id},
+                "success" : function(data) {
+                    var json = eval(data);
+                    if (json.status=="SUCCESS") {
+                        var tdata = json.data;
+                        var $dictData = $("#tmpl-edit-dictdata").tmpl(tdata);
+                        $('#dictionaryDataForm').html($dictData);
+
+                        //初始化表单校验
+                        initDictDataFormValidator();
+
+                        //弹出新增窗口
+                        $('#dictionary-data-Modal').modal({
+                            keyboard : true
+                        });
+
+                    } else {
+                        handleAjaxError(data);
+                    }
+                }
+            });
+        }
+
+        /**
+         * 保存字典数据
+         *		当点击字典数据编辑窗口“保存”按钮后 （新增、修改）
+         */
+        function saveDictionaryData() {
+            if (!$("#dictionaryDataForm").valid()) {
+                return false;
+            }
+            var dictData = $('#dictionaryDataForm').serializeObject();
+            $.ajax({
+                "dataType" : 'json',
+                "type" : "POST",
+                "url" : cmdSave_Data,
+                "data" : $('#dictionaryDataForm').serialize(),
+                "success" : function(data) {
+                    var json = eval(data);
+                    if (json.status=="SUCCESS") {
+                        hideDictionnaryDataModal();
+                        loadDictionaryData(dictData['dictCode']);
+                    } else {
+                        handleAjaxError(data);
+                    }
+                }
+            });
+        }
+
+        /**
+         * 初始化字典数据表单校验规则器
+         *		弹出字典数据编辑窗口前调用
+         */
+        function initDictDataFormValidator() {
+            $('#dictionaryDataForm').validate({
+                rules : {
+                    'dictCode' : {
+                        required : true
+                    },
+                    'dictdataName' : {
+                        required : true,
+                        maxlength : 20
+                    },
+                    'dictdataValue' : {
+                        required : true,
+                        maxlength : 35
+                    },
+                    'tranClass' : {
+                        required : true,
+                        maxlength : 40
+                    },
+                    'priority' : {
+                        required : true
+                    }
+                }
+            });
+        }
+
+
+    </script>
+</body>
+</html>

@@ -1,13 +1,13 @@
 package com.luohw.springboot;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import zipkin.server.EnableZipkinServer;
 
 @SpringBootApplication
 @EnableEurekaClient
-@EnableZipkinServer
+@MapperScan("com.luohw.springboot.mapper")  //扫描mapper接口
 public class SpringbootApplication {
 
 	public static void main(String[] args) {

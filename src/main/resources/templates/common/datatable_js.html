@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="datatableJS">
+
+    <!-- page specific plugin scripts -->
+    <script th:src="@{/bootstrap/js/dataTables/jquery.dataTables.js}"></script>
+    <script th:src="@{/bootstrap/js/dataTables/jquery.dataTables.bootstrap.js?v=9}"></script>
+    <script th:src="@{/bootstrap/js/dataTables/extensions/buttons/dataTables.buttons.js}"></script>
+    <script th:src="@{/bootstrap/js/dataTables/extensions/buttons/buttons.html5.js}"></script>
+    <script th:src="@{/bootstrap/js/dataTables/extensions/buttons/buttons.print.js}"></script>
+    <script th:src="@{/bootstrap/js/dataTables/extensions/select/dataTables.select.js}"></script>
+
+    <div th:include="common/fas_js :: fasJS" ></div>
+</div>
+</body>

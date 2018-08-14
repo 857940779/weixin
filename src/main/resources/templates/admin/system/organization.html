@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="common/simple_css :: head"></head>
+<title>中移运营支撑系统-组织架构</title>
+<body class="no-skin">
+
+<div class="main-container sub-page-content" id="main-container">
+    <!-- /section:basics/sidebar -->
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content" style="height: 0px;padding-bottom:50%">
+                <div class="row">
+                    <!-- /.page-header -->
+                    <div class="col-xs-4 col-sm-4 widget-container-col">
+                        <div class="widget-box">
+                            <!-- #section:custom/widget-box.options -->
+                            <div class="widget-header widget-header-flat">
+                                <h5 class="widget-title">
+                                    <i class="ace-icon fa fa-users bigger-130"></i>组织架构列表
+                                </h5>
+
+                                <div class="widget-toolbar no-border">
+                                    <input type="text" class="input-sm" id="search"
+                                           placeholder="查找..." style="width: 100px"> <span
+                                        style="padding-left: 20px;" data-rel="tooltip"
+                                        data-placement="bottom" title="刷新" onclick="initJsTree();">
+											<i class="ace-icon fa fa-refresh bigger-120 "></i>
+										</span>
+                                </div>
+
+                            </div>
+
+                            <!-- /section:custom/widget-box.options -->
+                            <div class="widget-body"
+                                 style="min-height: 450px; max-height: 500px; overflow-y: auto">
+                                <div class="widget-main">
+                                    <div class="clearfix">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <button class="btn btn-xs btn-info"
+                                                        onclick="toCreateSelectedSubOrg();">
+                                                    <i class="ace-icon fa fa-plus icon-on-left"></i>新增子机构
+                                                </button>
+                                                <button class="btn btn-xs btn-info"
+                                                        onclick="toEditSelectedOrg();">
+                                                    <i class="ace-icon fa fa-edit icon-on-left"></i>修改
+                                                </button>
+                                                <button class="btn btn-xs btn-info"
+                                                        onclick="toDeleteSelectedOrg();">
+                                                    <i class="ace-icon fa fa-trash-o icon-on-left"></i>删除
+                                                </button>
+                                            </div>
+
+                                            <div class="col-xs-12">
+                                                <div class="hr hr-dotted hr-16"></div>
+                                                <div id="jstree"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.span -->
+                    <!-- /.page-header -->
+                    <div class="col-xs-8 col-sm-8 widget-container-col"
+                         style="padding-left: 0px;">
+                                <div class="widget-box">
+                                    <div class="widget-body" style="margin-top: 20px">
+                                        <div class="widget-main widget-main-padding">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12">
+                                    <!-- #section:custom/widget-box.options -->
+                                    <form id='queryForm' class="form-horizontal" role="form">
+                                        <div class="form-group col-sm-3">
+                                            <label class="col-sm-4 control-label no-padding-right">帐号</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="username"
+                                                       class="col-xs-10 col-sm-12 input-sm" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-3">
+                                            <label class="col-sm-4 control-label no-padding-right">手机</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="mobile"
+                                                       class="col-xs-10 col-sm-12 input-sm" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-3">
+                                            <label class="col-sm-4 control-label no-padding-right">邮箱</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="email"
+                                                       class="col-xs-10 col-sm-12 input-sm" />
+                                            </div>
+                                        </div>
+
+                                        <input type="hidden" value="1" id="organizationId" name="organizationId"/>
+
+                                        <div class="form-group col-sm-3">
+                                            <button class="btn btn-xs btn-info" id="keyup13" type="button" onClick="doQuery();">
+                                                <i class="ace-icon fa fa-search icon-on-left"></i>查询
+                                            </button>
+
+                                            <button class="btn btn-xs btn-light" type="button" onClick="doQueryReset();">
+                                                <i class="ace-icon fa fa-refresh"></i> 重置
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-sm-8 widget-container-col"
+                         style="padding-left: 0px;">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12">
+                                <div class="widget-box">
+                                    <!-- #section:custom/widget-box.options -->
+                                    <div class="widget-header widget-header-flat">
+                                        <h5 class="widget-title">
+                                            <i class="ace-icon fa fa-table bigger-130"></i>数据列表
+                                        </h5>
+
+                                        <div class="widget-toolbar no-border">
+                                            <a href="#" data-action="fullscreen" class="orange2"> <i
+                                                    class="ace-icon fa fa-expand bigger-125"></i>
+                                            </a>
+                                        </div>
+
+                                        <div class="widget-toolbar no-border">
+                                            <shiro:hasPermission name="user:add">
+                                                <button class="btn btn-xs btn-info" onClick="addUser();">
+                                                    <i class="ace-icon fa fa-plus icon-on-left"></i>新增
+                                                </button>
+                                            </shiro:hasPermission>
+
+
+                                            <shiro:hasPermission name="user:update">
+                                                <button class="btn btn-xs btn-info" onClick="edit();">
+                                                    <i class="ace-icon fa fa-edit icon-on-left"></i>修改
+                                                </button>
+                                            </shiro:hasPermission>
+
+                                            <!--<shiro:hasPermission name="user:view">-->
+                                            <!--<button class="btn btn-xs btn-yellow" onClick="addUser();">-->
+                                            <!--<i class="ace-icon fa fa-file-text icon-on-left"></i>查看-->
+                                            <!--</button>-->
+                                            <!--</shiro:hasPermission>-->
+
+                                            <shiro:hasPermission name="user:delete">
+                                                <button class="btn btn-xs btn-info" onClick="doUserDelete();">
+                                                    <i class="ace-icon fa fa-trash-o icon-on-left"></i>删除
+                                                </button>
+                                            </shiro:hasPermission>
+                                        </div>
+                                    </div>
+
+                                    <!-- /section:custom/widget-box.options -->
+                                    <div class="widget-body">
+                                        <div class="widget-main"
+                                             style="padding-top: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px;">
+                                            <div class="clearfix">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <table id="dataTable" style="width: 100%"
+                                                               class="table table-striped table-bordered table-hover form-inline">
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 弹框 -->
+                    <div id="modal-form" class="modal" tabindex="-1">
+                        <div class="modal-dialog" style="width:60%;">
+                            <div class="modal-content" >
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title center blue">用户信息</h4>
+                                </div>
+
+                                <div class="modal-body">
+                                    <form id="dataform" class="form-horizontal" method="post" >
+                                        <!-- #section:elements.form -->
+                                        <input type="hidden" id="id" name="id" value="" />
+                                        <div class="form-group">
+                                            <div class="control-label col-xs-12 col-sm-3 no-padding-right" for="userid">帐号</div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <div class="clearfix">
+                                                    <input type="text" id="username"  name="username" value="" required="required" placeholder="成员唯一标识，不可更改，不支持中文" class="col-xs-12 col-sm-8" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="control-label col-xs-12 col-sm-3 no-padding-right" for="name">姓名</div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <div class="clearfix">
+                                                    <input type="text" id="nickname" name="nickname" value="" placeholder="用户名" required="required" class="col-xs-12 col-sm-8" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="hr hr-dotted"></div>
+                                        <div class="form-group">
+                                            <div class="control-label col-xs-12 col-sm-3 no-padding-right" for="mobile">手机</div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <div class="clearfix">
+                                                    <input type="tel" id="mobile"  name="mobile" maxlength="11" minlength="11" digits="digits" required="required" class="col-xs-12 col-sm-8" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="password" id="password"  name="password"  hidden />
+                                        <div class="form-group">
+                                            <div class="control-label col-xs-12 col-sm-3 no-padding-right" for="email">邮箱</div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <div class="clearfix">
+                                                    <input type="text" id="email" name="email" email="email" required="required" placeholder="邮箱" class="col-xs-12 col-sm-8" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="control-label col-xs-12 col-sm-3 no-padding-right" for="organization">公司</div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <select class="form-control selectpicker tag-input-style" id="organization" onchange="organizationOnchang()"
+                                                        data-style="btn-white" name="companyId" required="required" data-width="50%" data-live-search="true">
+                                                    <option  value="1" th:each="organization: ${organizations}" th:value="${organization.id}"
+                                                             th:text="${organization.name}">X</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="control-label col-xs-12 col-sm-3 no-padding-right" for="branch">部门</div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <select class="form-control selectpicker tag-input-style" id="branch" name="departmentId"
+                                                        data-style="btn-white" data-width="50%" required="required" data-live-search="true">
+                                                </select>
+                                                &nbsp;
+                                                <input type="hidden" id="mark_hidden" value="general" name="mark">
+                                                <input type="checkbox" id="mark" style="vertical-align:-3px;">
+                                                <label for="mark">部门负责人</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="control-label col-xs-12 col-sm-3 no-padding-right" for="role">角色</div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <select class="form-control selectpicker tag-input-style" id="role" name="role"
+                                                        data-style="btn-white" data-width="50%" required="required"
+                                                        multiple data-live-search="true">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-3 control-label no-padding-right" for="form-field-2">状态</div>
+                                            <div class="col-sm-8">
+                                                <div class="radio">
+                                                    <label>
+                                                        <input name="locked" type="radio" class="ace" checked="true" value="0" />
+                                                        <span class="lbl">&nbsp;&nbsp;启用</span>
+                                                    </label>
+                                                    <label>
+                                                        <input name="locked" type="radio" class="ace" value="1" />
+                                                        <span class="lbl">&nbsp;&nbsp;禁用</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button class="btn btn-sm" data-dismiss="modal">
+                                        <i class="ace-icon fa fa-times"></i>
+                                        取消
+                                    </button>
+
+                                    <button class="btn btn-sm btn-primary" id="btnsave" onclick="doUserSave();">
+                                        <i class="ace-icon fa fa-check"></i>
+                                        保存
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ／弹框 -->
+
+                </div>
+                <!-- /.row -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- 字典类别模态框（Modal） -->
+<div class="modal fade" id="modal-org" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-org-content"></div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+<!-- JS模板 新增 修改 -->
+<script id="tmpl-edit-org" type="text/x-jquery-tmpl">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true" style="font-size: 30px">&times;</button>
+						<h4 class="modal-title">编辑组织机构</h4>
+
+				</div>
+
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-xs-12">
+							<!-- PAGE CONTENT BEGINS -->
+							<form id="orgForm" class="form-horizontal" role="form">
+								<!-- #section:elements.form -->
+
+								<div class="space-4"></div>
+								<input type="hidden"  name="id" value="{{= id}}" />
+								<input type="hidden"  name="priority" value="{{= priority}}" />
+								<input type="hidden"  name="creator" value="{{= creator}}" />
+								<input type="hidden"  name="available" value="{{= available}}" />
+								<input type="hidden"  name="parentId" value="{{= parentId}}" />
+								<input type="hidden"  name="parentIds" value="{{= parentIds}}" />
+								<input type="hidden"  name="path" value="{{= path}}" />
+
+								<div class="form-group">
+									<label class="col-sm-3 control-label no-padding-right" > 父组织机构 </label>
+									<div class="col-sm-9">
+										<input type="text" readonly='true' class="col-xs-12 col-sm-12"  value="{{= parentName }}" />
+									</div>
+								</div>
+
+							   <div class="form-group">
+									<label class="col-sm-3 control-label no-padding-right" > 机构名称 </label>
+									<div class="col-sm-9">
+										<input type="text"  name="name"  class="col-xs-12 col-sm-12"  value="{{= name }}" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label no-padding-right" > 机构类型 </label>
+									<div class="col-sm-9" >
+												{{if id != '' }}
+														{{if   orgType == 'orgRoot' }}
+																	<input type="text" readonly='true' class="col-xs-12 col-sm-12"  value="总公司" />
+														{{else orgType == 'company'}}
+																	<input type="text" readonly='true' class="col-xs-12 col-sm-12"  value="公司" />
+														{{else orgType == 'branch'}}
+																	<input type="text" readonly='true' class="col-xs-12 col-sm-12"  value="部门" />
+														{{else orgType == 'group'}}
+																	<input type="text" readonly='true' class="col-xs-12 col-sm-12"  value="工作小组" />
+														{{/if}}
+								                        <input type="hidden"  name="orgType" value="{{= orgType}}" />
+												{{else}}
+														<select  class="form-control" name="orgType">
+																<option value="">请选择</option>
+																{{if parentType == 'orgRoot' }}
+																	<option  value="company">公司</option>
+																{{else parentType == 'company'}}
+																	<option  value="branch">部门</option>
+
+																{{/if}}
+
+														</select>
+												{{/if}}
+
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label no-padding-right" > 备注</label>
+									<div class="col-sm-9">
+										<textarea class="form-control limited" name="remark" maxlength="50" rows="5">{{= remark }}</textarea>
+									</div>
+								</div>
+								<div class="space-4"></div>
+								<div class="clearfix form-actions">
+									<div class="col-md-offset-3 col-md-9">
+										<button class="btn btn-info" type="button"
+											onclick="saveOrg();">
+											<i class="ace-icon fa fa-check"></i> 保存
+										</button>
+
+										&nbsp; &nbsp; &nbsp;
+										<button class="btn" type="button"
+											onclick="hideModalOrg();">
+											<i class="ace-icon fa fa-undo"></i> 取消
+										</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+	</script>
+
+
+
+<!-- JS模板 详情 -->
+<script id="tmpl-orgInfo" type="text/x-jquery-tmpl">
+	<h5 class="widget-title blue smaller" padding-right: 10px;>
+			<i class="ace-icon fa fa-rss orange"></i> 当前选中机构信息
+	</h5>
+	<div class="profile-user-info profile-user-info-striped"
+		style="width: 100%;">
+		<div class="profile-info-row">
+			<div class="profile-info-name">机构编码</div>
+
+			<div class="profile-info-value">
+				<span class="editable editable-click" id="username">{{= id}}</span>
+			</div>
+
+			<div class="profile-info-name">机构名称</div>
+
+			<div class="profile-info-value">
+				<i class="fa fa-map-marker light-orange bigger-110"></i>
+				<span class="editable editable-click" id="country">{{= name}}</span>
+			</div>
+		</div>
+
+
+		<div class="profile-info-row">
+			<div class="profile-info-name">机构类型</div>
+
+			<div class="profile-info-value">
+				<span class="editable editable-click" id="age">
+					{{if orgType == 'orgRoot'}}
+						<i class="ace-icon fa fa-home blue bigger-110"></i>总公司
+					{{else orgType == 'company'}}
+						<i class="ace-icon fa fa-sitemap blue bigger-110"></i>公司
+					{{else orgType == 'branch'}}
+						<i class="ace-icon fa fa-users blue bigger-110"></i>部门
+					{{else orgType == 'group'}}
+						<i class="ace-icon fa fa-user blue bigger-110"></i>小组
+					{{else}}
+						<i class="fa fa-map-marker light-orange bigger-110"></i>其他
+					{{/if}}
+			</div>
+
+			<div class="profile-info-name">是否可用</div>
+
+			<div class="profile-info-value">
+					{{if available}}
+						<span class="label label-sm label-success">可用</span>
+					{{else}}
+						<span class="label label-sm label-danger">不可用</span>
+					{{/if}}
+			</div>
+		</div>
+
+		<div class="profile-info-row">
+			<div class="profile-info-name">创建人</div>
+
+			<div class="profile-info-value">
+				<span class="editable editable-click" id="age">{{= creator}}</span>
+			</div>
+
+			<div class="profile-info-name">创建时间</div>
+
+			<div class="profile-info-value">
+				<span class="editable editable-click" id="login">{{= createtime}}</span>
+			</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">机构从属</div>
+
+			<div class="profile-info-value">
+				<span class="editable editable-click" id="signup">{{= path}}</span>
+			</div>
+		</div>
+
+		<div class="profile-info-row">
+			<div class="profile-info-name">备注</div>
+
+			<div class="profile-info-value">
+				<span class="editable editable-click" id="about">{{= remark}}</span>
+			</div>
+		</div>
+	</div>
+   </script>
+
+<!-- JS模板 部门列表 -->
+<script id="tmpl-subOrgs" type="text/x-jquery-tmpl">
+		{{each(i,org) subOrgs}}
+			<tr>
+				<td><a href="#">{{= org.name}}</a></td>
+				<td>
+					    {{if org.orgType == 'orgRoot'}}
+							总公司
+						{{else org.orgType == 'company'}}
+							公司
+						{{else org.orgType == 'branch'}}
+							部门
+						{{else org.orgType == 'group'}}
+							小组
+						{{else}}
+							其他
+						{{/if}}
+				</td>
+				<td>
+						<span class="badge badge-warning">{{= org.priority}}</span>
+				</td>
+				<td>
+					{{if org.available}}
+						<span class="label label-sm label-success">可用</span>
+					{{else}}
+						<span class="label label-sm label-danger">不可用</span>
+					{{/if}}
+				</td>
+				<td>
+					<div class="hidden-sm hidden-xs btn-group">
+						{{if org.priority == subOrgs.length}}
+							<button class="btn btn-xs btn-success disabled" data-rel="tooltip" data-placement="top" title="上移">
+								<i class="ace-icon fa fa-arrow-up bigger-120"></i>
+							</button>
+						{{else}}
+							<button class="btn btn-xs btn-success" data-rel="tooltip" data-placement="top" title="上移" onclick="changeOrgPriority({{= org.id}},{{= org.parentId}},'up',{{= org.priority}})">
+								<i class="ace-icon fa fa-arrow-up bigger-120"></i>
+							</button>
+						{{/if}}
+
+						{{if org.priority == 1}}
+							<button class="btn btn-xs btn-info disabled" data-rel="tooltip" data-placement="top" title="下移">
+								<i class="ace-icon fa fa-arrow-down bigger-120"></i>
+							</button>
+						{{else}}
+							<button class="btn btn-xs btn-info" data-rel="tooltip" data-placement="top" title="下移" onclick="changeOrgPriority({{= org.id}},{{= org.parentId}},'down',{{= org.priority}})">
+								<i class="ace-icon fa fa-arrow-down bigger-120"></i>
+							</button>
+						{{/if}}
+
+						<button class="btn btn-xs btn-warning" data-rel="tooltip" data-placement="top" title="编辑" onclick="toEditOrgById({{= org.id }},{{= org.parentId}})">
+							<i class="ace-icon fa fa-edit bigger-120"></i>
+						</button>
+							<button class="btn btn-xs btn-danger" data-rel="tooltip" data-placement="top" title="删除" onclick="doDeleteOrg({{= org.id }},{{= org.parentId}})">
+								<i class="ace-icon fa fa-trash-o bigger-120"></i>
+							</button>
+					</div>
+				</td>
+			</tr>
+		{{/each}}
+   </script>
+
+
+<div th:include="common/simple_js :: simpleJS" ></div>
+<div th:include="common/tree_js :: treeJS" ></div>
+<div th:include="common/datatable_js :: datatableJS" ></div>
+<script th:src="@{/bootstrap/js/bootstrap-select.js}"></script>
+<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap-select.css}" />
+<script th:src="@{/js/common/crypto-js-master/crypto-js.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+
+    var cmdInit = /*[[@{/organization/init}]]*/;
+    var cmdSave = /*[[@{/organization/save}]]*/;
+    var cmdQuery=/*[[@{/organization/query}]]*/;
+    var cmdGet = /*[[@{/organization/get}]]*/;
+    var cmdDelete=/*[[@{/organization/delete}]]*/;
+    var cmdPriority=/*[[@{/organization/changepriority}]]*/;
+
+    var cmdUserList = /*[[@{/user/list}]]*/;
+    var cmdUserQuery = /*[[@{/user/view}]]*/;
+    var cmdSelectRole=/*[[@{/user/getrole}]]*/;
+    var cmdUserSave = /*[[@{/user/add}]]*/;
+    var cmdUserDelete = /*[[@{/user/delete}]]*/;
+
+    $(window).on('load', function () {
+        $('.selectpicker').selectpicker({
+            noneSelectedText: '请选择',
+            noneResultsText : '没有找到',
+        });
+
+    });
+    $("#mark").change(function() {
+        if ($("#mark").is(':checked')){
+            $("#mark_hidden").val('director')
+        }else {
+            $("#mark_hidden").val('general')
+        }
+    });
+    var mark = null;
+    var dataTable = null;
+    jQuery(function($) {
+        dataTable = $('#dataTable').dataTable({
+            //数据列控制（包括对应返回JSON属性名称，对应表头列索引位置、数据转换封装等）
+            "aoColumnDefs" : [
+                {
+                    "sTitle": "<div class='center'><input type='checkbox' name='checkAll' id='checkAll' /></div>",
+                    "sName" : "id", //库表字段名
+                    "mData" : "id", //JSON返回属性
+                    "aTargets" : [ 0 ], //第几列
+                    "mRender" : function(value,type, row) {
+                        return "<div class='center'><input type='checkbox' class='selectRow' name='id' value='"+value+"'/></div>";
+                    },
+                    "bSortable" : false
+                },
+                {
+                    "sTitle" : "用户帐号",
+                    "sName" : "username",
+                    "mData" : "username",
+                    "aTargets" : [ 1 ],
+                    "bSortable" : true
+                },
+                {
+                    "sTitle" : "姓名",
+                    "sName" : "nickname",
+                    "mData" : "nickname",
+                    "aTargets" : [ 2 ],
+                    "bSortable" : false
+                },
+                {
+                    "sTitle" : "手机号码",
+                    "sName" : "mobile",
+                    "mData" : "mobile",
+                    "aTargets" : [ 3 ],
+                    "bSortable" : false
+                },
+                {
+                    "sTitle" : "电子邮箱",
+                    "sName" : "email",
+                    "mData" : "email",
+                    "aTargets" : [ 4 ],
+                    "bSortable" : false
+                },
+                {
+                    "sTitle" : "身份标识",
+                    "sName" : "mark",
+                    "mData" : "mark",
+                    "aTargets" : [ 5 ],
+                    "bSortable" : false,
+                    "bVisible" : false,
+                    "mRender": function (value, type, row) {
+                        mark = value;
+                        return value;
+                    }
+                },
+                {
+                    "sTitle" : "部门",
+                    "sName" : "department_name",
+                    "mData" : "departmentName",
+                    "aTargets" : [ 6 ],
+                    "bSortable" : false,
+                    "mRender": function (value, type, row) {
+                        if (mark == "director"){
+                            return value+"(负责人)";
+                        }
+                        return value;
+                    }
+                },
+                {
+                    "sTitle" : "是否可用",
+                    "sName" : "locked",
+                    "mData" : "locked",
+                    "aTargets" : [ 7 ],
+                    "bSortable" : true,
+                    "mRender" : function(value,type, row) {
+                        return ParamTool.getTranHtml("LOCKED",value);
+                    }
+                },
+                {
+                    "sName" : "id", //库表字段名
+                    "mData" : "id", //JSON返回属性
+                    "aTargets" : [ 8 ], //第几列
+                    "bVisible" : false
+                }],
+            "aaSorting" : [ [ 7, "asc" ] ],//初始化加载，默认按第几列排序、排序方式（列从0开始计算）
+            "sAjaxSource" : cmdUserList
+            //数据源URL
+        });
+    });
+
+    $(function(){
+        $("#checkAll").on('click',checkClick);
+        //queryRole();
+    });
+
+    //新增前清空表单
+    function addUser(){
+        $("#dataform")[0].reset();
+        $("#dataform input[name='id']").val("");
+        $("#dataform input[name='username']").attr('readonly', false);
+        setSelectedOrg();
+        $('#modal-form').modal('show');
+    }
+
+    //编辑表单信息
+    function edit(){
+        var pkvalue = checkEdit();
+        if(pkvalue == false || pkvalue == ""){
+            return false;
+        }
+
+        $.ajax({
+            "dataType": 'json',
+            "type": "POST",
+            "url": cmdUserQuery,
+            "data":{"id":pkvalue},
+            "success": function(data){
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    var user=json.data;
+                    var roles = user.roles;
+                    console.log(user);
+                    console.log(roles);
+                    $("#dataform input[name='id']").val(user.id);
+                    $("#dataform input[name='username']").val(user.username).attr('readonly', true);
+                    $("#dataform input[name='nickname']").val(user.nickname);
+                    $("#dataform input[name='mobile']").val(user.mobile);
+                    $("#dataform input[name='email']").val(user.email);
+                    //下拉回显
+                    $('#organization').selectpicker('val', user.companyId);
+                    organizationOnchang();
+                    $('.selectpicker').selectpicker('refresh');
+                    $('.selectpicker').selectpicker('render');
+                    $('#branch').selectpicker('val', user.departmentId);
+                    var arr = new Array();
+                    for (var i = 0; i < roles.length; i++) {
+                        arr[i]=roles[i].id+"";
+                    }
+                    $('#role').selectpicker('val', arr);
+                    $('.selectpicker').selectpicker('refresh');
+                    $('.selectpicker').selectpicker('render');
+
+                    if(user.locked=='1'){
+                        $("#dataform input[name='locked'][value=1]").attr("checked",true);
+                        $("#dataform input[name='locked'][value=0]").attr("checked",false);
+                    }else{
+                        $("#dataform input[name='locked'][value=0]").attr("checked",true);
+                        $("#dataform input[name='locked'][value=1]").attr("checked",false);
+                    }
+                    if(user.mark=='director'){
+                        $("#mark").prop("checked",true);
+                        $("#mark_hidden").val('director');
+                    }else if(user.mark=='general'){
+                        $("#mark").prop("checked",false);
+                        $("#mark_hidden").val('general');
+                    }
+                    $('#modal-form').modal('show');
+                }else{
+                    alert("查找失败");
+                }
+            }
+        });
+    }
+
+    //保存用户表单信息
+    function doUserSave(){
+        if (!$("#dataform").valid()) {
+            return false;
+        }
+        $("#password").val(CryptoJS.MD5($("#mobile").val()));
+        $.ajax({
+            "dataType": 'json',
+            "type": "POST",
+            "url": cmdUserSave,
+            "data":$('#dataform').serialize(),
+            "success": function(data){
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    if(json.msg == "update"){
+                        alert("保存成功！")
+                    }
+                    if(json.msg == "add"){
+                        alert("保存成功，初始密码为手机号码，为了保证个人信息安全,请您尽快修改密码！")
+                    }
+                    $("#modal-form").modal('hide');
+                    dataTable.fnDraw();
+                }else{
+                    alert("保存失败，请稍后重试！");
+                }
+            }
+        });
+    }
+
+    /**
+     *获取目前的组织架构动态加载部门和角色
+     */
+    function organizationOnchang(){
+        var organizationId = $('#organization').val();
+        $.ajax({
+            "dataType": 'json',
+            "type": "POST",
+            "url": cmdSelectRole,
+            "async": false,
+            "data":{"organizationId":organizationId},
+            "success": function(data){
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    var role = json.data.roles;
+                    var company = json.data.companys;
+                    var len = role.length;
+                    var optionString = "";
+                    $("#role").find('option').remove();
+                    for (i = 0; i < len; i++) {
+                        optionString += "<option value=\'"+ role[i].id +"\'>" + role[i].name + "</option>";
+                    }
+                    var myobj = document.getElementById("role");
+                    if (myobj.options.length == 0)
+                    {
+                        $("#role").html(optionString);
+                        $("#role").selectpicker('refresh');
+                    }
+
+                    var len1 = company.length;
+                    var optionString1 = "";
+                    $("#branch").find('option').remove();
+                    for (i = 0; i < len1; i++) {
+                        optionString1 += "<option value=\'"+ company[i].id +"\'>" + company[i].name + "</option>";
+                    }
+                    var myobj = document.getElementById("branch");
+                    if (myobj.options.length == 0)
+                    {
+                        $("#branch").html(optionString1);
+                        $("#branch").selectpicker('refresh');
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 删除选中记录
+     * @return
+     */
+    function doUserDelete(){
+        var pkvalue="";
+        var delCount = 0;
+        $("#dataTable").find("input[name=id]").each(function(){
+            if(this.checked){
+                pkvalue += $(this).attr("value")+",";
+                delCount += 1;
+            }
+        });
+        if(delCount < 1){
+            if(parent){
+                parent.bootbox.alert("请选择删除记录");
+            }else{
+                bootbox.alert("请选择删除记录");
+            }
+            return false;
+        }
+        pkvalue = pkvalue.substr(0, pkvalue.length-1);
+        top.bootbox.confirm("确定要删除?", function(result) {
+            if (result) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": cmdUserDelete,
+                    "data":{"ids":pkvalue},
+                    "success": function(data){
+                        var json = eval(data);
+                        if(json.status=="SUCCESS"){
+                            dataTable.fnDraw();
+                        }else{
+                            alert("删除失败");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+
+    /******************************************分割线*********************************/
+
+    $(function() {
+        initJsTree();//初始化组织机构树
+        bindResizeEvent();//绑定页面resize事件
+    });
+
+    //初始化角色树
+    function initJsTree(selectedOrgId) {
+        $.ajax({
+            url : cmdInit,
+            type : 'POST',
+            dataType : 'json',
+            success : function(data) {
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    treeConfig(json.data.treeNodes, selectedOrgId);
+                } else {
+                    handleAjaxError(json);
+                }
+            }
+        });
+    }
+
+
+    function treeConfig(data, selectedOrgId) {
+
+        if($('#jstree').jstree(true)){
+            $('#jstree').jstree(true).destroy();
+        }
+
+        var to = false;
+        $('#search').keyup(function() {
+            if (to) {
+                clearTimeout(to);
+            }
+            to = setTimeout(function() {
+                var v = $('#search').val();
+                $('#jstree').jstree(true).search(v);
+            }, 250);
+        });
+
+        $jstree = $('#jstree')
+            .jstree(
+                {
+                    "core" : {
+                        "animation" : 0,
+                        "check_callback" : true,
+                        "data" : data
+                    },
+                    'themes' : {
+                        'responsive' : false,
+                        'variant' : 'large',
+                        'stripes' : true
+                    },
+                    "types" : {
+                        "#" : {
+                            "max_depth" : 5,
+                            "valid_children" : [ "orgRoot",
+                                "branch", "dept", "group" ]
+                        },
+                        "orgRoot" : {
+                            "icon" : "ace-icon fa fa-home bigger-130 blue"
+                        },
+                        "company" : {
+                            "icon" : "ace-icon fa fa-sitemap bigger-130 blue"
+                        },
+                        "branch" : {
+                            "icon" : "ace-icon fa fa-users blue bigger-130"
+                        },
+                        "group" : {
+                            "icon" : "ace-icon fa fa-user blue bigger-110"
+                        },
+                        "default" : {
+                            "icon" : "ace-icon fa fa-file icon-lg blue"
+                        },
+                        "file" : {
+                            "icon" : "ace-icon fa fa-file icon-lg blue"
+                        }
+                    },
+                    "plugins" : [ "contextmenu", "search",
+                        "unique", "conditionalselect", "state",
+                        "types", "changed"
+                        // "wholerow", "dnd"  这两种插件可以不要,checkbox可以使用
+                    ],
+                    "conditionalselect" : function(node, event) {
+                        return true;
+                    },
+                    "contextmenu" : {
+                        "items" : {
+                            "create" : null,
+                            "rename" : null,
+                            "remove" : null,
+                            "ccp" : null,
+                            "add" : {
+                                "label" : "新增子机构",
+                                "icon" : "ace-icon fa fa-folder bigger orange",
+                                "_disabled" : false,
+                                "separator_before" : false,
+                                "separator_after" : false,
+                                "action" : function(obj) {
+                                    toCreateSelectedSubOrg();
+                                }
+                            },
+                            "edit" : {
+                                "label" : "修改",
+                                "_disabled" : false,
+                                "separator_before" : true,
+                                "separator_after" : false,
+                                "icon" : "ace-icon fa fa-edit icon-lg yellow",
+                                "action" : function(obj) {
+                                    toEditSelectedOrg();
+                                }
+                            },
+                            "delete" : {
+                                "label" : "删除",
+                                "_disabled" : false,
+                                "separator_before" : true,
+                                "separator_after" : false,
+                                "icon" : "ace-icon fa fa-trash-o icon-lg red2",
+                                "action" : function(obj) {
+                                    var inst = jQuery.jstree
+                                        .reference(obj.reference);
+                                    var clickedNode = inst
+                                        .get_node(obj.reference);
+                                    toDeleteSelectedOrg(
+                                        clickedNode.id,
+                                        clickedNode.parent);
+                                }
+                            }
+
+                        }
+                    }
+                });
+
+        $jstree.on("changed.jstree", function(e, data) {
+            var action = data.action;
+            if (action == "select_node") {
+                var orgId = data.node.id;
+                loadOrganizationData(orgId);
+            }
+        }).on("show_contextmenu.jstree", function(e, data) {
+            var dictType = data.node.type;
+            if (dictType == 'orgRoot') {
+                $(".jstree-contextmenu").find("li:gt(2)").hide();
+            } else if (dictType == 'company') {
+            } else if (dictType == 'branch') {
+                $(".jstree-contextmenu").find("li:lt(1)").hide();
+            } else if (dictType == 'group') {
+                $(".jstree-contextmenu").find("li:lt(1)").hide();
+            }
+        }).on("ready.jstree", function(e) {
+            if (selectedOrgId) {
+                loadOrganizationData(selectedOrgId);
+            }
+        });
+
+    }
+
+
+    /**
+     * 加载组织机构相关信息（组织机构信息、子机构列表）
+     *  orgId : 选中树形机构节点ID
+     *      当点击机构节点，则根据ID查询加载机构详细信息、机构下的子机构列表
+     *
+     */
+    function loadOrganizationData(orgId) {
+//        $.ajax({
+//            url : cmdQuery,
+//            type : 'POST',
+//            dataType : 'json',
+//            "data":{"orgId":orgId},
+//            success : function(data) {
+//                var json = eval(data);
+////                if(json.status=="SUCCESS"){
+////                    if (json.data.org) {
+////                        var $org = $("#tmpl-orgInfo").tmpl(
+////                            json.data.org);
+////                        $('#orgInfo').html($org);
+////                    }
+////                    if (json.data.subOrgs) {
+////                        var $subOrgs = $("#tmpl-subOrgs").tmpl(
+////                            json.data);
+////                        $('#subOrgs').html($subOrgs);
+////                    }
+////
+////                    $('[data-rel=tooltip]').tooltip();
+////
+////                } else {
+////                    handleAjaxError(json);
+////                }
+//            }
+//        });
+        $("#organizationId").val(orgId);
+        dataTable.fnDraw();
+
+    }
+
+    /**
+     * 新增子机构
+     *     当点击“新增子机构”按钮 或者 右键菜单“新增子机构”时调用
+     *  1) 是否选中节点校验
+     *  2) 最大层级校验
+     *  3) 构造初始化机构节点JSON对象
+     *  4) 弹出编辑窗口
+     */
+    function toCreateSelectedSubOrg() {
+
+        var node = getSelectedOrgNode();
+        if (!node) {
+            return false;
+        }
+
+        //校验目录层级校验（最多允许三级）
+        if (node.parents.length >= 3) {
+            top.bootbox.alert("新增失败! 最多允许二级分类");
+            return false;
+        }
+
+        var data = {
+            "id" : "",
+            "name" : "",
+            "parentId" : node.id,
+            "parentName" : node.text,
+            "parentType" : node.type
+        };
+
+        showModalOrg(data);
+    }
+
+    /**
+     * 组织机构-修改-弹出修改窗口
+     *  	根据ID查询机构信息,然后显示编辑窗口
+     *  	orgId: 需要修改的机构ID
+     */
+    function toEditOrgById(orgId) {
+        $.ajax({
+            "dataType" : 'json',
+            "type" : "POST",
+            "url" : cmdGet,
+            "data":{"id":orgId},
+            "success" : function(data) {
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    showModalOrg(json.data);
+                } else {
+                    handleAjaxError(json);
+                }
+            }
+        });
+    }
+
+    /**
+     *  编辑树形选中机构
+     *      当前点击“修改”按钮 或者右键树形节点菜单“修改”时调用
+     *  1) 根据选中ID，加载机构信息
+     */
+    function toEditSelectedOrg() {
+        var node = getSelectedOrgNode();
+        if (!node) {
+            return false;
+        }
+
+        toEditOrgById(node.id);
+    }
+
+    /**
+     * 弹出组织机构编辑窗口
+     *       新增、修改操作时，弹出
+     *  1) 是否选中校验
+     *  2) 表单校验初始化
+     *  3) 弹出编辑模态窗口
+     */
+    function showModalOrg(data) {
+        var node = getSelectedOrgNode();
+        if (!node) {
+            return false;
+        }
+        var resourceHtml = $("#tmpl-edit-org").tmpl(data);
+        $('#modal-org-content').html(resourceHtml);
+
+        //初始化表单校验
+        initFormValidator();
+
+        //弹出新增窗口
+        $('#modal-org').modal({
+            keyboard : true
+        });
+    }
+
+    /**
+     *  隐藏组织机构编辑窗口
+     *        手动关闭 | 保存成功自动关闭
+     */
+    function hideModalOrg() {
+        $('#modal-org').modal('hide');
+    }
+
+    /**
+     * 保存组织机构
+     *		点击编辑窗口“保存”按钮调用
+     *  1)  表单校验
+     *  2)  表单序列化
+     *  3)  异步执行保存
+     3-1: 成功更新树形节点（包括新增、修改）
+     */
+    function saveOrg() {
+        var ref = $('#jstree').jstree(true);
+        var sel = ref.get_selected();
+        //表单校验
+        if (!$('#orgForm').valid()) {
+            return false;
+        }
+
+        var data = $('#orgForm').serializeObject();
+        $.ajax({
+            "dataType" : 'json',
+            "type" : "POST",
+            "url" : cmdSave,
+            "data" : $('#orgForm').serialize(),
+            "success" : function(data) {
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    sel = sel[0];
+                    var node = ref.get_node(sel);
+                    if (data['id']) { //修改
+                        ref.rename_node(node, json.data.name);
+                    } else { //创建
+                        var newNode = json.data;
+                        ref.create_node(sel, newNode);
+                    }
+                    hideModalOrg();
+                    loadOrganizationData(sel);
+                    window.location.reload();
+                } else {
+                    handleAjaxError(json);
+                }
+            }
+        });
+    }
+
+    /**
+     * 预处理-删除选中树形机构(先校验)
+     *        当点击“删除”按钮 或者 右键菜单“删除”时调用
+     *    1)  判断是否选中节点
+     *    2)  判断是否根节点
+     *	  3)  判断是否存在子节点
+     */
+    function toDeleteSelectedOrg() {
+        var ref = getJsTree();
+        var node = getSelectedOrgNode();
+        if (!node) {
+            return false;
+        }
+        var selectNodeType = node.type;
+        if (selectNodeType == 'orgRoot') {
+            top.bootbox.alert("根节点不允许删除");
+            return false;
+        }
+
+        if (ref.is_parent(node)) {
+            top.bootbox.alert("删除失败！ 存在子节点,请先删除子节点.");
+        } else {
+            doDeleteOrg(node.id);
+        }
+    }
+
+    /**
+     * 调用后台删除组织机构对象
+     *
+     *   orgId:  要删除的组织机构ID
+     * parentId：  要删除的组织机构其父机构ID
+     */
+    function doDeleteOrg(orgId) {
+        top.bootbox.confirm("确定要删除? 删除后可能影响程序正常运行！请确认记录未关联使用.", function(result) {
+            if (result) {
+                $.ajax({
+                    type : 'POST',
+                    url : cmdDelete,
+                    dataType : "json",
+                    "data":{"orgId":orgId},
+                    success : function(data) {
+                        var json = eval(data);
+                        if(json.status=="SUCCESS"){
+                            var ref = $('#jstree').jstree(true)
+                            //删除角色节点
+                            ref.delete_node(orgId);
+
+                        } else {
+                            top.bootbox.alert(json.msg);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * 调用后台改变排序位置
+     *  parentId :  父机构ID
+     *    	type :  up (上移)| down (下移)
+     *  priority :  当前优先级别 （显示顺序）
+     */
+    function changeOrgPriority(id, parentId, type, priority) {
+        $.ajax({
+            type : 'POST',
+            url : cmdPriority,
+            dataType : "json",
+            "data":{
+                "id": id,
+                "type": type,
+                "priority": priority
+            },
+            success : function(data) {
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    loadOrganizationData(parentId);
+                } else {
+                    handleAjaxError(json);
+                }
+            }
+        });
+    }
+
+    /**
+     *组织机构表单校验规则初始化
+     *        新增、修改组织机构时
+     *
+     */
+    function initFormValidator() {
+        $('#orgForm').validate({
+            rules : {
+                'id' : {},
+                'name' : {
+                    required : true,
+                    maxlength : 20
+                },
+                'orgType' : {
+                    required : true
+                },
+                'remark' : {
+                    required : false,
+                    maxlength : 100
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取当前选中的机构节点
+     */
+    function getSelectedOrgNode() {
+        var ref = getJsTree();
+        var sel = ref.get_selected();
+        if (!sel.length) {
+            top.bootbox.alert("请先选择一个节点");
+            return false;
+        }
+        sel = sel[0];
+        return ref.get_node(sel);
+    }
+
+    /**
+     * 回显公司和部门
+     */
+    function setSelectedOrg(){
+        var ref = getJsTree();
+        var SelectedNode = getSelectedOrgNode();
+        var selectNodeType = SelectedNode.type;
+        if (selectNodeType == 'company') {
+            //直接下拉回显公司
+            $('#organization').selectpicker('val', SelectedNode.id);
+            organizationOnchang();
+            $('.selectpicker').selectpicker('refresh');
+            $('.selectpicker').selectpicker('render');
+        }
+        if (selectNodeType == 'branch') {
+            var parentId = SelectedNode.parent;
+
+            //回显公司
+            $('#organization').selectpicker('val', parentId);
+            organizationOnchang();
+            //回显部门
+            $('#branch').selectpicker('val', SelectedNode.id);
+        }
+    }
+
+
+    /**
+     * 获取JSTREE对象
+     */
+    function getJsTree() {
+        return $('#jstree').jstree(true);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/simple_css :: head"></head>
+<title>中移运营支撑系统-用户</title>
+<body class="no-skin">
+<div class="main-container" id="main-container">
+
+    <!-- /section:basics/sidebar -->
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content">
+                <div class="row">
+                    <!-- /.page-header -->
+                    <div class="col-xs-12 col-sm-12 widget-container-col">
+                        <div class="widget-box">
+                            <div class="widget-body" style="margin-top: 20px">
+                                <div class="widget-main widget-main-padding">
+                                    <div class="clearfix">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <!-- PAGE CONTENT BEGINS -->
+                                                <form id='queryForm' class="form-horizontal" role="form">
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-3">
+                                                            <label class="col-sm-4 control-label no-padding-right">渠道</label>
+                                                            <div class="col-sm-8">
+                                                                <select class="chosen-select col-xs-10 col-sm-12" id="channel"  name="channel">
+                                                                    <option  value="">请选择</option>
+                                                                    <option  value="1" th:each="channel: ${channelsList}" th:value="${channel.name}"
+                                                                             th:text="${channel.name}">des</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-3">
+                                                            <label class="col-sm-4 control-label no-padding-right">接口</label>
+                                                            <div class="col-sm-8">
+                                                                <select class="chosen-select col-xs-10 col-sm-12" id="action"  name="action">
+                                                                    <option  value="">请选择</option>
+                                                                    <option  value="1" th:each="dictionaryData: ${dictionaryDatas}" th:value="${dictionaryData.dictdataName}"
+                                                                             th:text="${dictionaryData.dictdataValue}">des</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="form-group col-sm-3">
+                                                            <label class="col-sm-4 control-label no-padding-right">用户号码</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" name="msisdn"
+                                                                       class="col-xs-10 col-sm-12 input-sm" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-3">
+                                                            <button class="btn btn-xs btn-info" type="button" onClick="doQuery();">
+                                                                <i class="ace-icon fa fa-search icon-on-left"></i>查询
+                                                            </button>
+
+                                                            <button class="btn btn-xs btn-light" type="button" onClick="doQueryReset();">
+                                                                <i class="ace-icon fa fa-refresh"></i> 重置
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-3">
+                                                            <label class="col-sm-4 control-label no-padding-right">状态码</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" name="resultcode"
+                                                                       class="col-xs-10 col-sm-12 input-sm" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-6">
+                                                            <label class="col-sm-2 control-label no-padding-right">时间</label>
+                                                            <div class="col-sm-10">
+                                                                <div class="input-group">
+                                                                    <input type="text" placeholder="开始时间" autoComplete="off"
+                                                                           class="form_datetime input-sm form-control"
+                                                                           name="beginTime"/> <span
+                                                                        class="input-group-addon"> <i
+                                                                        class="fa fa-exchange"></i></span>
+                                                                    <input type="text" placeholder="结束时间" autoComplete="off"
+                                                                           class="form_datetime input-sm form-control" name="endTime"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.span -->
+                </div>
+                <!-- /.row -->
+
+
+
+                <div class="row">
+                    <!-- /.page-header -->
+                    <div class="col-xs-12 col-sm-12 widget-container-col">
+                        <div class="widget-box">
+                            <!-- #section:custom/widget-box.options -->
+                            <div class="widget-header widget-header-flat">
+                                <h5 class="widget-title">
+                                    <i class="ace-icon fa fa-table bigger-130"></i>数据列表
+                                </h5>
+
+                                <div class="widget-toolbar no-border">
+                                    <a href="#" data-action="fullscreen" class="orange2"> <i
+                                            class="ace-icon fa fa-expand bigger-125"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- /section:custom/widget-box.options -->
+                            <div class="widget-body">
+                                <div class="widget-main"
+                                     style="padding-top: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px;">
+                                    <div class="clearfix">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <table id="dataTable" style="width: 100%"
+                                                       class="table table-striped table-bordered table-hover form-inline">
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.span -->
+                </div>
+                <!-- /.row -->
+
+                <!-- 弹框 -->
+                <div id="modal-form" class="modal" tabindex="-1">
+                    <div class="modal-dialog" style="width:70%;">
+                        <div class="modal-content" >
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title center blue">详情</h4>
+                            </div>
+
+                            <div class="modal-body">
+
+                                <form id="dataform" class="form-horizontal row" method="post" >
+                                    <!-- #section:elements.form -->
+                                    <input type="hidden" name="channeladId" value="" />
+                                    <div class="form-group">
+                                        <label class="col-xs-2 control-label">服务</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="servicename">
+                                        </div>
+                                        <label class="col-xs-2 control-label">模块</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="biztype">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-xs-2 control-label">接口</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="action">
+                                        </div>
+                                        <label class="col-xs-2 control-label">级别</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="level">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-xs-2 control-label">用户号码</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="msisdn">
+                                        </div>
+                                        <label class="col-xs-2 control-label">渠道</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="channel">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-xs-2 control-label">状态码</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="resultcode">
+                                        </div>
+                                        <label class="col-xs-2 control-label">请求时间</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="starttime">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-xs-2 control-label">响应时长(ms)</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="costtime">
+                                        </div>
+                                        <label class="col-xs-2 control-label">客户端类型</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="clienttype">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">标记</label>
+                                        <div class="col-xs-4">
+                                            <input readonly type="text" class="form-control" name="mark">
+                                        </div>
+                                    </div>
+
+                                    <ul class="nav nav-pills">
+                                        <li class="active"><a href="#args" data-toggle="tab">请求</a></li>
+                                        <li><a href="#resultmsg" data-toggle="tab">响应</a></li>
+                                    </ul>
+                                    <div class="tab-content">
+
+                                    <div class="tab-pane fade in active" id="args">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <textarea readonly class="form-control" rows="12" name="args"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="resultmsg">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <textarea readonly class="form-control" rows="12" name="resultmsg"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+
+                            <div class="modal-footer">
+
+                                <button class="btn btn-sm" data-dismiss="modal">
+                                    <i class="ace-icon fa fa-times"></i>
+                                    返回
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ／弹框 -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:include="common/simple_js :: simpleJS" ></div>
+<div th:include="common/datatable_js :: datatableJS" ></div>
+<script th:src="@{/bootstrap/js/date-time/moment.js}"></script>
+<script th:src="@{/bootstrap/js/date-time/bootstrap-datetimepicker.js}"></script><link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap-datetimepicker.css}" /><script th:src="@{/bootstrap/js/date-time/bootstrap-datetimepicker.zh-CN.js}"></script>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var cmdList = /*[[@{/interfacelog/list}]]*/;
+    var cmdQuery = /*[[@{/interfacelog/query}]]*/;
+
+    $(function() {
+        $('.form_datetime').datetimepicker({
+            language:  'zh-CN',
+            weekStart: 0,
+            todayBtn:  1,
+            autoclose: 1,
+            format:"yyyy-mm-dd hh:ii:ss"
+        });
+    });
+
+
+    var dataTable = null;
+    jQuery(function($) {
+        dataTable = $('#dataTable').dataTable({
+                    //数据列控制（包括对应返回JSON属性名称，对应表头列索引位置、数据转换封装等）
+                    "aoColumnDefs" : [
+                        {
+                            "sTitle": "序号",
+                            "sName" : "id", //库表字段名
+                            "mData" : "id", //JSON返回属性
+                            "aTargets" : [ 0 ], //第几列
+                            "bSortable" : false,
+                            "bVisible" : false
+                        },
+                        {
+                            "sTitle" : "服务",
+                            "sName" : "serviceName",
+                            "mData" : "servicename",
+                            "aTargets" : [ 1 ],
+                            "bSortable" : true,
+                            "mRender" : function(value,type, row) {
+                                if (value == undefined){
+                                    return "/";
+                                }
+                                return value;
+                            }
+                        },
+                        {
+                            "sTitle" : "模块",
+                            "sName" : "bizType",
+                            "mData" : "biztype",
+                            "aTargets" : [ 2 ],
+                            "bSortable" : true,
+                            "mRender" : function(value,type, row) {
+                                if (value == undefined){
+                                    return "/";
+                                }
+                                return value;
+                            }
+                        },
+                        {
+                            "sTitle" : "接口",
+                            "sName" : "action",
+                            "mData" : "action",
+                            "aTargets" : [ 3 ],
+                            "bSortable" : false,
+                            "mRender" : function(value,type, row) {
+                                if (value == undefined){
+                                    return "/";
+                                }
+                                return value;
+                            }
+                        },
+                        {
+                            "sTitle" : "用户号码",
+                            "sName" : "msisdn",
+                            "mData" : "msisdn",
+                            "aTargets" : [ 4 ],
+                            "bSortable" : false,
+                            "mRender" : function(value,type, row) {
+                                if (value == undefined){
+                                    return "/";
+                                }
+                                return value;
+                            }
+                        },
+                        {
+                            "sTitle" : "渠道",
+                            "sName" : "channel",
+                            "mData" : "channel",
+                            "aTargets" : [ 5 ],
+                            "bSortable" : false,
+                            "mRender" : function(value,type, row) {
+                                if (value == undefined){
+                                    return "/";
+                                }
+                                return value;
+                            }
+                        },
+                        {
+                            "sTitle" : "状态码",
+                            "sName" : "resultCode",
+                            "mData" : "resultcode",
+                            "aTargets" : [ 6 ],
+                            "bSortable" : true,
+                            "mRender" : function(value,type, row) {
+                                if (value == undefined){
+                                    return "/";
+                                }
+                                return value;
+                            }
+                        },
+                        {
+                            "sTitle" : "请求时间",
+                            "sName" : "startTime",
+                            "mData" : "starttime",
+                            "aTargets" : [ 7 ],
+                            "bSortable" : true,
+                            "mRender" : function(value,type, row) {
+                                return newDate(value).Format("yyyy-MM-dd hh:mm:ss");
+                            }
+                        },
+                        {
+                            "sTitle" : "响应时间(ms)",
+                            "sName" : "costTime",
+                            "mData" : "costtime",
+                            "aTargets" : [ 8 ],
+                            "bSortable" : true
+                        },
+                        {
+                            "sTitle" : "操作",
+                            "sName" : "id",
+                            "mData" : "id",
+                            "aTargets" : [ 9 ],
+                            "bSortable" : false,
+                            "mRender" : function(value, type, row) {
+                                var html = "";
+                                html += " <button type=\"button\" onclick=edit(" + value + ") class=\"btn btn-yellow btn-sm\">详情</button>";
+                                return html;
+                            }
+                        }],
+                    "aaSorting" : [ [ 7, "desc" ] ],//初始化加载，默认按第几列排序、排序方式（列从0开始计算）
+                    "sAjaxSource" : cmdList
+                    //数据源URL
+                });
+    })
+    function test(){
+        $('#modal-form').modal('show');
+    }
+    //查看详情
+    function edit(pkvalue){
+        $.ajax({
+            "dataType": 'json',
+            "type": "POST",
+            "url": cmdQuery,
+            "data":{"id":pkvalue},
+            "success": function(data){
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    var interfaceLog=json.data;
+                    $("#dataform input[name='servicename']").val(interfaceLog.servicename);
+                    $("#dataform input[name='biztype']").val(interfaceLog.biztype);
+                    $("#dataform input[name='action']").val(interfaceLog.action);
+                    $("#dataform input[name='level']").val(interfaceLog.level);
+                    $("#dataform input[name='msisdn']").val(interfaceLog.msisdn);
+                    $("#dataform input[name='channel']").val(interfaceLog.channel);
+                    $("#dataform input[name='resultcode']").val(interfaceLog.resultcode);
+                    $("#dataform input[name='starttime']").val((newDate(interfaceLog.starttime)).Format("yyyy-MM-dd hh:mm:ss"));
+                    $("#dataform input[name='costtime']").val(interfaceLog.costtime);
+                    $("#dataform input[name='clienttype']").val(interfaceLog.clienttype);
+                    $("#dataform input[name='costtime']").val(interfaceLog.costtime);
+                    $("#dataform select[name='mark']").val(interfaceLog.mark);
+                    $("#dataform textarea[name='args']").val(interfaceLog.args);
+                    var result = JSON.stringify(JSON.parse(interfaceLog.resultmsg), null, 4);
+                    $("#dataform textarea[name='resultmsg']").val(result);
+
+                    $('#modal-form').modal('show');
+                }else{
+                    alert("查找失败");
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

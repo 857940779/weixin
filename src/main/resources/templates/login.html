@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/simple_css :: head"></head>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+<body class="login-layout blur-login">
+    <div class="main-container">
+        <div class="main-content">
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <div class="login-container">
+                        <div class="center">
+                            <h1>
+                                <span class="white">XXX</span>
+                                <span class="white" id="id-text2">后台管理系统</span>
+                            </h1>
+                        </div>
+
+                        <div class="space-6"></div>
+
+                        <div class="position-relative">
+                            <div id="login-box"
+                                 class="login-box visible widget-box no-border">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <h4 class="header blue lighter bigger">
+                                            <i class="ace-icon fa fa-coffee green"></i> 帐号登录
+                                        </h4>
+
+                                        <div class="space-6"></div>
+
+                                        <form id="dataform" method="POST">
+                                            <fieldset>
+                                                <label class="block clearfix">
+                                                    <span class="block input-icon input-icon-right">
+                                                    <input type="text" class="form-control" name="username"
+                                                           placeholder="输入用户名/邮箱/手机号" required="required" /> <i
+                                                            class="ace-icon fa fa-user"></i>
+                                                    </span>
+                                                </label> <label class="block clearfix">
+                                                    <span class="block input-icon input-icon-right">
+                                                            <input id="password" name="password" type="password" class="form-control" placeholder="输入密码" required="required"  />
+                                                            <i class="ace-icon fa fa-lock"></i>
+                                                    </span>
+                                            </label>
+
+
+                                                <div class="clearfix">
+                                                    <button type="button" id ="login"
+                                                            class="width-100 pull-right btn btn-sm btn-primary no-border">
+                                                        <span class="bigger-150">登&nbsp;&nbsp;录</span>
+                                                    </button>
+                                                </div>
+                                            </fieldset>
+                                            <div class="space-6"></div>
+                                        </form>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="navbar-fixed-top align-right">
+                        <br /> &nbsp; <a id="btn-login-dark" href="#">暗色</a> &nbsp; <span
+                            class="blue">/</span> &nbsp; <a id="btn-login-blur" href="#">蓝色</a>
+                        &nbsp; <span class="blue">/</span> &nbsp; <a id="btn-login-light"
+                                                                     href="#">亮色</a> &nbsp; &nbsp; &nbsp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div th:include="common/simple_js :: simpleJS" ></div>
+    <script th:src="@{/js/common/crypto-js-master/crypto-js.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+        //登陆操作，此处还可以添加密码加密等操作。
+        var login = "/login/login";
+
+        jQuery(function($) {
+
+            $("#login").on("click",function () {
+                $("#password").val($("#password").val());
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": login,
+                    "data": $('#dataform').serialize(),
+                    "success": function (data) {
+                        var json = eval(data);
+                        $("#password").val("");
+                        if (data.status == "SUCCESS") {
+                            //登陆成功后跳转到新页面,调url获取菜单
+                            window.location.href = json.data;
+                        } else {
+                            $(".space").hide();
+                            $("#imgCode").click();
+                            $("#errorMsg").html("<div class=\"red\" style=\"height:auto;\">"+json.data+"</div>");
+                        }
+                    }
+                });
+            })
+        });
+    </script>
+</body>
+</html>

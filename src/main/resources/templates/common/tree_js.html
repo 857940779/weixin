@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="treeJS">
+    <!-- page specific plugin scripts -->
+    <script th:src="@{/bootstrap/js/fuelux/fuelux.tree.js?v=1}"></script>
+
+    <script th:src="@{/bootstrap/js/treeview/bootstrap-treeview.js}"></script>
+    <script th:src="@{/bootstrap/js/jstree/jstree.js}"></script>
+
+
+    <script th:src="@{/bootstrap/js/ace/elements.treeview.js}"></script>
+    <script th:src="@{/bootstrap/js/jquery.tmpl.js}"></script>
+
+
+    <div th:include="common/fas_js :: fasJS" ></div>
+</div>
+</body>

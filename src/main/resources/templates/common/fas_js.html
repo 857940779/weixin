@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="fasJS">
+
+    <script th:src="@{/bootstrap/js/fas/fas.datadic.js?v=22}"></script>
+    <script th:src="@{/bootstrap/js/fas/fas.dateFormat.js}"></script>
+    <script th:src="@{/bootstrap/js/fas/fas.stringFormat.js}"></script>
+    <script th:src="@{/bootstrap/js/fas/fas.formSerializeJson.js}"></script>
+    <script th:src="@{/bootstrap/js/fas/fas.pageUtil.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        var RESULT_SUCCESS = 'success';
+        var RESULT_ERROR = 'error';
+        var cmdDictInit = /*[[@{/dict/init}]]*/;
+        var ParamTool = new ParamsUtil(cmdDictInit);
+    </script>
+</div>
+</body>

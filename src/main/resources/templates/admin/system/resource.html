@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/simple_css :: head"></head>
+<title>中移运营支撑系统-权限</title>
+<body class="no-skin">
+
+<div class="main-container sub-page-content" id="main-container">
+    <!-- /section:basics/sidebar -->
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content">
+                <div class="row">
+                    <!-- /.page-header -->
+                    <div class="col-xs-4 col-sm-4 widget-container-col">
+                        <div class="widget-box">
+                            <!-- #section:custom/widget-box.options -->
+                            <div class="widget-header widget-header-flat">
+                                <h5 class="widget-title">
+                                    <i class="ace-icon fa fa-sitemap bigger-130"></i>资源树
+                                </h5>
+
+                                <div class="widget-toolbar no-border">
+                                    <input type="text" class="input-sm" id="search"
+                                           placeholder="查找..." style="width: 100px"> <span
+                                        style="padding-left: 20px;" data-rel="tooltip"
+                                        data-placement="bottom" title="刷新" onclick="initJsTree();">
+											<i class="ace-icon fa fa-refresh bigger-120 "></i>
+										</span>
+                                </div>
+
+                            </div>
+
+                            <!-- /section:custom/widget-box.options -->
+                            <div class="widget-body"
+                                 style="min-height: 450px; max-height: 500px; overflow-y: auto">
+                                <div class="widget-main">
+                                    <div class="clearfix">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                    <button class="btn btn-xs btn-info"
+                                                            onclick="toCreateResource('menu');">
+                                                        <i class="ace-icon fa fa-plus icon-on-left"></i>新增子菜单
+                                                    </button>
+                                                    <button class="btn btn-xs btn-info"
+                                                            onclick="toCreateResource('button');">
+                                                        <i class="ace-icon fa fa-plus icon-on-left"></i>新增按钮
+                                                    </button>
+                                                    <button class="btn btn-xs btn-info"
+                                                            onclick="toEditSelectedResource();">
+                                                        <i class="ace-icon fa fa-edit icon-on-left"></i>修改
+                                                    </button>
+                                                    <button class="btn btn-xs btn-info"
+                                                            onclick="toDeleteSelectedResource();">
+                                                        <i class="ace-icon fa fa-trash-o icon-on-left"></i>删除
+                                                    </button>
+                                            </div>
+
+                                            <div class="col-xs-12">
+                                                <div class="hr hr-dotted hr-16"></div>
+                                                <!-- <ul id="treeview"></ul> -->
+                                                <div id="jstree"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.span -->
+
+                    <!-- /.page-header -->
+                    <div class="col-xs-8 col-sm-8 widget-container-col"
+                         style="padding-left: 0px;">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12">
+
+                                <div class="widget-box">
+                                    <!-- #section:custom/widget-box.options -->
+                                    <div class="widget-header widget-header-flat">
+                                        <h5 class="widget-title">
+                                            <i class="ace-icon fa fa-info bigger-130"></i> 资源信息
+                                        </h5>
+                                        <div class="widget-toolbar no-border"></div>
+                                    </div>
+
+                                    <!-- /section:custom/widget-box.options -->
+                                    <div class="widget-body" style="min-height: 450px;">
+                                        <div class="widget-main">
+                                            <div class="clearfix">
+                                                <div class="row">
+                                                    <div id="resourceInfo" class="col-xs-12"
+                                                         style="padding-left: 10px; padding-right: 10px;"></div>
+                                                </div>
+
+                                                <!-- PAGE CONTENT BEGINS -->
+                                                <div class="row">
+                                                    <div class="col-xs-12 table-scrollable"
+                                                         style="padding-left: 10px; padding-right: 10px;">
+                                                        <h5 class="widget-title blue smaller">
+                                                            <i class="ace-icon fa fa-rss orange"></i> 子资源列表
+                                                        </h5>
+                                                        <table id="simple-table" class="table table-striped table-bordered table-hover">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>资源名称</th>
+                                                                <th>类型</th>
+                                                                <th>优先级</th>
+                                                                <th>权限</th>
+                                                                <th>状态</th>
+                                                                <th>样式</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody id="subResources">
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <!-- /.span -->
+                                                </div>
+                                                <!-- /.row -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.row -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- 字典类别模态框（Modal） -->
+<div class="modal fade" id="modal-resource" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-resource-content"></div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+
+<!-- JS模板 -->
+<script id="tmpl-edit-resource" type="text/x-jquery-tmpl">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true" style="font-size: 30px">×</button>
+						{{if type == 'menu'}}
+								<h4 class="modal-title">编辑菜单</h4>
+						{{else}}
+								<h4 class="modal-title">编辑按钮</h4>
+						{{/if}}
+
+				</div>
+
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-xs-12">
+							<!-- PAGE CONTENT BEGINS -->
+							<form id="resourceForm" class="form-horizontal" role="form">
+								<!-- #section:elements.form -->
+
+								<div class="space-4"></div>
+											<input type="hidden"  name="id" value="{{= id}}" />
+											<input type="hidden"  name="parentId" value="{{= parentId}}" />
+											<input type="hidden"  name="type" value="{{= type}}" />
+
+							   <div class="form-group">
+									<div class="col-sm-9">
+											<input type="text"  name="name" placeholder="资源名称" class="col-xs-10 col-sm-10"  value="{{= name }}" />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-9" >
+											{{if type == 'menu'}}
+												<input type="text" value="菜单" class="col-xs-10 col-sm-10" readonly=true/>
+											{{else}}
+												<input type="text" value="按钮" class="col-xs-10 col-sm-10" readonly=true/>
+											{{/if}}
+									</div>
+								</div>
+								{{if type == 'menu'}}
+										<div class="form-group">
+											<div class="col-sm-9">
+													<input type="text"  name="url" placeholder="资源URL" class="col-xs-10 col-sm-10"  value="{{= url }}" />
+												</div>
+										</div>
+								{{/if}}
+								<div class="form-group">
+									<div class="col-sm-9">
+										<input type="text" name="permission"  placeholder="资源权限" class="col-xs-10 col-sm-10" value="{{= permission}}"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-9">
+										<input type="text" name="priority"  placeholder="优先级" class="col-xs-10 col-sm-10" value="{{= priority}}"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-9">
+										<input type="text" name="iconClass" placeholder="资源样式" class="col-xs-10 col-sm-10" value="{{= iconClass}}"/>
+									</div>
+								</div>
+								<div class="space-4"></div>
+								<div class="clearfix form-actions">
+									<div class="col-md-offset-3 col-md-9">
+										<button class="btn btn-info" type="button" id="keyup13"
+											onclick="saveResource();">
+											<i class="ace-icon fa fa-check"></i> 保存
+										</button>
+
+										&nbsp; &nbsp; &nbsp;
+										<button class="btn" type="button"
+											onclick="hideModalResource();">
+											<i class="ace-icon fa fa-undo"></i> 取消
+										</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+	</script>
+
+
+
+<!-- JS模板 -->
+<script id="tmpl-resource" type="text/x-jquery-tmpl">
+
+
+			<h5 class="widget-title blue smaller">
+				<i class="ace-icon fa fa-rss orange"></i> 当前选中资源信息
+			</h5>
+			<div class="profile-user-info profile-user-info-striped"
+				style="width: 100%;">
+				<div class="profile-info-row">
+					<div class="profile-info-name">资源名称</div>
+
+					<div class="profile-info-value">
+						<span class="editable editable-click" id="username">{{= resource.name }}</span>
+					</div>
+
+					<div class="profile-info-name">资源类型</div>
+
+					<div class="profile-info-value">
+						<i class="fa fa-map-marker light-orange bigger-110"></i>
+							{{if resource.type == 'menu'}}
+                                <span>菜单</span>
+                            {{else}}
+                                <span>按钮</span>
+                            {{/if}}
+					</div>
+				</div>
+
+
+				<div class="profile-info-row">
+					<div class="profile-info-name">资源优先级</div>
+
+					<div class="profile-info-value">
+						<span class="editable editable-click" id="age">
+								{{= resource.priority }}
+						</span>
+					</div>
+
+					<div class="profile-info-name">是否可用</div>
+
+					<div class="profile-info-value">
+                        {{if resource.available}}
+                            <span class="label label-sm label-success">可用</span>
+                        {{else}}
+                            <span class="label label-sm label-danger">不可用</span>
+                        {{/if}}
+					</div>
+				</div>
+
+				{{if resource.type == 'menu'}}
+					<div class="profile-info-row">
+						<div class="profile-info-name">资源URL</div>
+
+						<div class="profile-info-value">
+							<span class="editable editable-click" id="about">{{= resource.url }}</span>
+						</div>
+					</div>
+				{{/if}}
+
+
+				<div class="profile-info-row">
+					<div class="profile-info-name">资源权限</div>
+
+					<div class="profile-info-value">
+						<span class="editable editable-click" id="signup">{{= resource.permission }}</span>
+					</div>
+				</div>
+
+				<!--<div class="profile-info-row">-->
+					<!--<div class="profile-info-name">资源样式</div>-->
+
+					<!--<div class="profile-info-value">-->
+						<!--<span class="editable editable-click" id="about">{{= resource.iconClass }}</span>-->
+					<!--</div>-->
+				<!--</div>-->
+			</div>
+
+	</script>
+
+<!-- JS模板 -->
+<script id="tmpl-subResources" type="text/x-jquery-tmpl">
+		{{each(i,data) subResources}}
+			<tr class="data-item">
+				<td>{{= data.name}}</td>
+				<td>
+					{{if data.type == 'menu'}}
+						<span class="label label-sm label label-info ">菜单</span>
+					{{else}}
+						<span class="label label-sm label label-grey">按钮</span>
+					{{/if}}
+				</td>
+
+				<td>
+					<span class="badge badge-warning">{{= data.priority}}</span>
+				</td>
+
+				<td>
+					{{= data.permission}}
+				</td>
+				<td>
+					{{if data.available}}
+						<span class="label label-sm label-success">可用</span>
+					{{else}}
+						<span class="label label-sm label-danger">不可用</span>
+					{{/if}}
+				</td>
+				<td>{{= data.iconClass}}</td>
+				<td>
+					<div class="hidden-sm hidden-xs btn-group">
+					<shiro:hasPermission name="resource:add">
+                        <button class="btn btn-xs btn-warning" data-rel="tooltip" data-placement="top" title="编辑" onclick="toEditResourceById({{= data.id}},'{{= data.parentId}}')">
+                            <i class="ace-icon fa fa-edit bigger-120"></i>
+                        </button>
+                    </shiro:hasPermission>
+					<shiro:hasPermission name="resource:delete">
+                        <button class="btn btn-xs btn-danger" data-rel="tooltip" data-placement="top" title="删除" onclick="doDeletResource({{= data.id}},'{{= data.parentId}}')">
+                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                        </button>
+                    </shiro:hasPermission>
+					</div>
+				</td>
+			</tr>
+		{{/each}}
+   </script>
+
+
+
+<div th:include="common/simple_js :: simpleJS" ></div>
+<div th:include="common/tree_js :: treeJS" ></div>
+
+<script type="text/javascript" th:inline="javascript">
+    var cmdInit = /*[[@{/resource/init}]]*/;
+    var cmdQuery = /*[[@{/resource/query}]]*/;
+    var cmdSave = /*[[@{/resource/add}]]*/;
+    var cmdGet = /*[[@{/resource/get}]]*/;
+    var cmdDelete = /*[[@{/resource/delete}]]*/;
+
+    $(function() {
+        initJsTree();//初始化组织机构树
+        bindResizeEvent();//绑定页面resize事件
+
+    });
+
+    /**
+     *  初始化资源树
+     *      初始化 或者 刷新树时调用
+     */
+    function initJsTree() {
+        buildResourceTree();
+    }
+
+    /**
+     *  加载数据并初始化JSTREE
+     * selectedResId : 加载前选中的节点ID（如果第一次初始化为undefind）
+     */
+    function buildResourceTree(selectedResId) {
+        $.ajax({
+            url : cmdInit,
+            type : 'POST',
+            dataType : 'json',
+            success : function(data) {
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    treeConfig(json.data.treeNodes, selectedResId);
+                } else {
+                    handleAjaxError(data);
+                }
+            }
+        });
+    }
+
+    /**
+     * JSTREE 树形插件配置
+     */
+    function treeConfig(data, selectedResId) {
+        var tree = getJsTree();
+        if (tree) {
+            tree.destroy();
+        }
+
+        var to = false;
+        $('#search').keyup(function() {
+            if (to) {
+                clearTimeout(to);
+            }
+            to = setTimeout(function() {
+                var v = $('#search').val();
+                $('#jstree').jstree(true).search(v);
+            }, 250);
+        });
+
+        var $jstree = $('#jstree')
+            .jstree(
+                {
+                    "core" : {
+                        "animation" : 0,
+                        "check_callback" : true,
+                        "data" : data
+                        //'data' : data  一次性加载
+                        /** 'data' : {   异步逐级加载
+								    'url' : function (node) {
+								      return node.id === '#' ?
+								        'ajax_roots.json' :
+								        'ajax_children.json';
+								    },
+								    'data' : function (node) {
+								      return { 'id' : node.id };
+								    }
+								 }**/
+                    },
+                    /**'force_text' : true,**/
+                    'themes' : {
+                        'responsive' : false,
+                        'variant' : 'large',
+                        'stripes' : true
+                    },
+                    "types" : {
+                        "#" : {
+                            "max_depth" : 4,
+                            "valid_children" : [ "root", "menu",
+                                "button" ]
+                        },
+                        "root" : {
+                            "icon" : "ace-icon fa fa-home bigger-130 blue"
+                        },
+                        "menu" : {
+                            "icon" : "ace-icon fa fa-leaf bigger-130 green"
+                        },
+                        "button" : {
+                            "icon" : "ace-icon fa  fa-hand-pointer-o bigger-130 blue"
+                        },
+                        "default" : {
+                            "icon" : "ace-icon fa fa-file icon-lg blue"
+                        },
+                        "file" : {
+                            "icon" : "ace-icon fa fa-file icon-lg blue"
+                        }
+                    },
+                    "plugins" : [ "contextmenu", "search",
+                        "unique", "conditionalselect", "state",
+                        "types", "changed"
+                        // "wholerow", "dnd"  这两种插件可以不要,checkbox可以使用
+                    ],
+                    "conditionalselect" : function(node, event) {
+                        return true;
+                    },
+                    "contextmenu" : {
+                        "items" : {
+                            "create" : null,
+                            "rename" : null,
+                            "remove" : null,
+                            "ccp" : null,
+                            /**
+                             separator_before - a boolean indicating if there should be a separator before this item
+                             separator_after - a boolean indicating if there should be a separator after this item
+                             _disabled - a boolean indicating if this action should be disabled
+                             label - a string - the name of the action (could be a function returning a string)
+                             action - a function to be executed if this item is chosen
+                             icon - a string, can be a path to an icon or a className, if using an image that is in the current directory use a ./ prefix, otherwise it will be detected as a class
+                             shortcut - keyCode which will trigger the action if the menu is open (for example 113 for rename, which equals F2)
+                             shortcut_label - shortcut label (like for example F2 for rename)
+                             **/
+                            "add1" : {
+                                "label" : "新增子菜单",
+                                "icon" : "ace-icon fa fa-folder bigger orange",
+                                "_disabled" : false,
+                                "separator_before" : false,
+                                "separator_after" : false,
+                                "action" : function(obj) {
+                                    /**var inst = jQuery.jstree
+                                     .reference(obj.reference);
+                                     var clickedNode = inst
+                                     .get_node(obj.reference);
+                                     alert("add operation--clickedNode's id is:"
+                                     + clickedNode.id);**/
+
+                                    toCreateResource("menu");
+                                }
+                            },
+                            "add" : {
+                                "label" : "新增按钮",
+                                "icon" : "ace-icon fa fa-leaf bigger blue",
+                                "_disabled" : false,
+                                "separator_before" : false,
+                                "separator_after" : false,
+                                "action" : function(obj) {
+                                    toCreateResource("button");
+                                }
+                            },
+                            "edit" : {
+                                "label" : "修改",
+                                "_disabled" : false,
+                                "separator_before" : true,
+                                "separator_after" : false,
+                                "icon" : "ace-icon fa fa-edit icon-lg yellow",
+                                "action" : function(obj) {
+                                    toEditSelectedResource();
+                                }
+                            },
+                            "delete" : {
+                                "label" : "删除",
+                                "_disabled" : false,
+                                "separator_before" : true,
+                                "separator_after" : false,
+                                "icon" : "ace-icon fa fa-trash-o icon-lg red2",
+                                "action" : function(obj) {
+                                    var inst = jQuery.jstree
+                                        .reference(obj.reference);
+                                    var clickedNode = inst
+                                        .get_node(obj.reference);
+                                    toDeleteResource(
+                                        clickedNode.id,
+                                        clickedNode.parent);
+                                }
+                            }
+
+                        }
+                    }
+                });
+
+        $jstree.on("changed.jstree", function(e, data) {
+            var action = data.action;
+            if (action == "select_node") {
+                var resId = data.node.id;
+                loadResourceData(data.node.id);
+            }
+        }).on("show_contextmenu.jstree", function(e, data) {
+            var dictType = data.node.type;
+            if (dictType == 'root') {
+                $(".jstree-contextmenu").find("li:gt(0)").hide();
+                //根节点大于1的都要隐藏，只能新建菜单,不能修改、删除、新增按钮
+            } else if (dictType == 'menu') {
+                //菜单可以新增子菜单、按钮、修改、删除,无需隐藏菜单
+            } else if (dictType == 'button') {
+                $(".jstree-contextmenu").find("li:lt(2)").hide();//按钮只能进行修改、删除操作
+            }
+        }).on("ready.jstree", function(e) {
+            if (selectedResId) {
+                loadResourceData(selectedResId);
+            }
+        });
+    }
+
+    /**
+     * 加载资源相关信息（资源信息、子资源列表）
+     *  resId : 选中树形资源节点ID
+     *      当点击资源节点，则根据ID查询加载资源信息、子资源列表
+     *
+     */
+    function loadResourceData(resId) {
+        $.ajax({
+                url : cmdQuery,
+                type : 'POST',
+                data:{"id":resId},
+                dataType : 'json',
+                success : function(data) {
+                    var json = eval(data);
+                    if(json.status=="SUCCESS"){
+                        if (json.data.resource) {
+                            var $dict = $("#tmpl-resource").tmpl(json.data);
+                            $('#resourceInfo').html($dict);
+                        }
+                        if (json.data.subResources) {
+                            var resourceHtml = $("#tmpl-subResources").tmpl(json.data);
+                            $('#subResources').html(resourceHtml);
+                        }
+                        $('[data-rel=tooltip]').tooltip();
+
+                    } else {
+                        handleAjaxError(data);
+                    }
+                }
+            });
+
+    }
+
+    /**
+     * 新增资源
+     *  type : menu | button
+     *  1) 是否选中节点校验
+     *  2) 最大层级校验
+     *  3) 构造初始化机构节点JSON对象
+     *  4) 弹出编辑窗口
+     */
+    function toCreateResource(type) {
+        var node = getSelectedOrgNode();
+        if (!node) {
+            return false;
+        }
+        var selectNodeType = node.type;
+
+        if (selectNodeType == 'button') {
+            top.bootbox.alert("按钮不能新增子类别");
+            return false;
+        }
+        //校验 目录层级校验（最多允许三级）
+        if (node.parents.length >= 4) {
+            top.bootbox.alert("新增失败! 最多允许三级分类");
+            return false;
+        }
+
+        var data = {
+            "name" : "",
+            "type" : type,
+            "parentId" : node.id
+        };
+
+        showModalResource(data);
+    }
+
+    /**
+     * 资源-修改-弹出修改窗口
+     *  	根据ID查询资源信息,然后显示编辑窗口
+     *  	resId: 需要修改的资源ID
+     */
+    function toEditResourceById(resId) {
+        $.ajax({
+            "dataType" : 'json',
+            "type" : "POST",
+            "url" : cmdGet,
+            "data":{"id":resId},
+            "success" : function(data) {
+                var json = eval(data);
+                if(json.status=="SUCCESS"){
+                    showModalResource(json.data);
+                } else {
+                    handleAjaxError(data);
+                }
+            }
+        });
+    }
+
+    /**
+     *  编辑树形选中资源
+     *      当前点击“修改”按钮 或者右键树形节点菜单“修改”时调用
+     *  1) 根据选中ID，加载资源详细信息、子资源列表
+     */
+    function toEditSelectedResource() {
+        var node = getSelectedOrgNode();
+        if (!node) {
+            return false;
+        }
+        var selectNodeType = node.type;
+        if (selectNodeType == 'root') {
+            top.bootbox.alert("根节点不允许编辑");
+            return false;
+        }
+
+        toEditResourceById(node.id);
+    }
+
+    /**
+     * 弹出资源编辑窗口
+     *       新增、修改操作时，弹出
+     *  1) 是否选中校验
+     *  2) 表单校验初始化
+     *  3) 弹出编辑模态窗口
+     */
+    function showModalResource(resource) {
+        var node = getSelectedOrgNode();
+        if (!node) {
+            return false;
+        }
+
+        var resourceHtml = $("#tmpl-edit-resource").tmpl(resource);
+        $('#modal-resource-content').html(resourceHtml);
+
+        //初始化表单校验
+        initFormValidator();
+
+        //弹出新增窗口
+        $('#modal-resource').modal({
+            keyboard : true
+        });
+    }
+
+    /**
+     *隐藏资源编辑窗口
+     *    手动关闭 | 保存成功自动关闭
+     */
+    function hideModalResource() {
+        $('#modal-resource').modal('hide');
+    }
+
+    /**
+     * 保存资源(菜单、按钮)
+     *		点击编辑窗口“保存”按钮调用
+     *  1)  表单校验
+     *  2)  表单序列化
+     *  3)  异步执行保存
+     3-1: 成功更新树形节点（包括新增、修改）
+     */
+    function saveResource() {
+        var ref = $('#jstree').jstree(true);
+        var sel = ref.get_selected();
+
+        if (!$('#resourceForm').valid()) {
+            return false;
+        }
+        var nowdata = $('#resourceForm').serializeObject();
+        $.ajax({
+            "dataType" : 'json',
+            "type" : "POST",
+            "url" : cmdSave,
+            "data" : $('#resourceForm').serialize(),
+            "success" : function(data) {
+                var json = eval(data);
+                if(json.status=="SUCCESS") {
+                    sel = sel[0];
+                    var node = ref.get_node(sel);
+                    if (nowdata['id']) { //修改
+                        ref.rename_node(node, json.data.text);
+                    } else { //创建
+                        var newNode = json.data;
+                        ref.create_node(sel, newNode);
+                    }
+                    hideModalResource();
+                    loadResourceData(sel);
+                } else {
+                    handleAjaxError(data);
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 预处理-删除选中资源(先校验)
+     *        当点击“删除”按钮 或者 右键菜单“删除”时调用
+     *    1)  判断是否选中节点
+     *    2)  判断是否根节点
+     *	  3)  判断是否存在子节点
+     */
+    function toDeleteSelectedResource() {
+        var ref = getJsTree();
+        var node = getSelectedOrgNode();
+        if (!node) {
+            return false;
+        }
+
+        var selectNodeType = node.type;
+        if (selectNodeType == 'root') {
+            top.bootbox.alert("根节点不允许删除");
+            return false;
+        }
+
+        toDeleteResource(node.id, node.parent);
+    }
+
+    /**
+     * 预处理-删除选中树形机构(先校验)
+     *        当点击子资料列表操作列“删除”时
+     *    1)  判断是否选中节点
+     *    2)  判断是否根节点
+     *	  3)  判断是否存在子节点
+     */
+    function toDeleteResource(resId, parentId) {
+        var ref = $('#jstree').jstree(true);
+        var node = ref.get_node(resId);
+        //根节点不允许删除
+        if (node.type == 'root') {
+            return false;
+        } else if (node.type == 'menu') {//字典分类目录
+            if (ref.is_parent(node)) {
+                top.bootbox.alert("删除失败！ 存在子节点,请先删除子节点.");
+            } else {
+                doDeletResource(resId, parentId);
+            }
+        } else if (node.type == 'button') {//字典类别
+            doDeletResource(resId, parentId);
+        }
+    };
+
+    /**
+     * 调用后台删除资源对象
+     *
+     *       id:  要删除的资源ID
+     * parentId：  要删除的资源其父ID
+     */
+    function doDeletResource(id, parentId) {
+        top.bootbox.confirm("确定要删除?", function(
+            result) {
+            if (result) {
+                $.ajax({
+                    type : 'POST',
+                    url : cmdDelete,
+                    data:{"id":id},
+                    dataType : "json",
+                    success: function(data){
+                        var json = eval(data);
+                        if(json.status=="SUCCESS"){
+                            buildResourceTree(parentId);
+                        } else {
+                            handleAjaxError(data);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * 资源表单校验规则初始化
+     *        新增、修改菜单、按钮时
+     *
+     */
+    function initFormValidator() {
+        $('#resourceForm').validate({
+            rules : {
+                'resource.id' : {},
+                'resource.name' : {
+                    required : true,
+                    maxlength : 20
+                },
+                'resource.type' : {
+                    required : true
+                },
+                'resource.url' : {
+                    required : false,
+                    maxlength : 50
+                },
+                'resource.permission' : {
+                    required : true,
+                    maxlength : 20
+                },
+                'resource.iconClass' : {
+                    required : false,
+                    maxlength : 40
+                },
+            }
+        });
+    }
+
+    /**
+     * 获取当前选中的资源菜单节点
+     */
+    function getSelectedOrgNode() {
+        var ref = getJsTree();
+        var sel = ref.get_selected();
+        if (!sel.length) {
+            top.bootbox.alert("请先选择一个节点");
+            return false;
+        }
+        sel = sel[0];
+        return ref.get_node(sel);
+    }
+    /**
+     * 获取JSTREE对象
+     */
+    function getJsTree() {
+        return $('#jstree').jstree(true);
+    }
+</script>
+</body>
+</html>

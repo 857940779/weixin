@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head :: head"></head>
+<meta charset="UTF-8">
+<title>Title</title>
+</head>
+<body>
+<div class="main-container" id="main-container">
+    <script type="text/javascript" th:inline="javascript">
+        try{ace.settings.check('main-container' , 'fixed')}catch(e){}
+        var index = /*[[@{/admin/index}]]*/;
+        function godesktop() {
+            top.location = index;
+        }
+    </script>
+    <div class="main-container-inner">
+
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+
+                        <div class="error-container">
+                            <div class="well">
+                                <h1 class="grey lighter smaller">
+											<span class="blue bigger-125">
+												<i class="icon-sitemap"></i>
+												[(${status})]
+											</span>
+                                    [(${error})]
+                                </h1>
+
+                                <hr />
+                                <h3 class="lighter smaller">
+                                    但是我们正在尝试
+                                    <i class="icon-wrench icon-animated-wrench bigger-125"></i>
+                                    修复它!
+                                </h3>
+
+                                <div class="space"></div>
+
+                                <div>
+                                    <h4 class="lighter smaller">同时, 请尝试按以下方式解决:</h4>
+
+                                    <ul class="list-unstyled spaced inline bigger-110 margin-15">
+                                        <li>
+                                            <i class="glyphicon glyphicon-hand-right blue"></i>
+                                            阅读下使用说明
+                                        </li>
+
+                                        <li>
+                                            <i class="glyphicon glyphicon-hand-right blue"></i>
+                                            告诉我们更多关于错误的信息
+                                        </li>
+                                    </ul>
+                                    <span>[(${error})]</span>
+                                </div>
+
+
+                                <hr />
+                                <div class="space"></div>
+
+                                <div class="center">
+                                    <a href="javascript:history.back()" class="btn btn-grey">
+                                        <i class="ace-icon glyphicon glyphicon-share-alt icon-on-left"></i>
+                                        返回
+                                    </a>
+
+                                    <a href="javaScript:void(0)" onclick="godesktop()" class="btn btn-primary">
+                                        <i class="ace-icon glyphicon glyphicon-home"></i>
+                                        首页
+                                    </a>
+                                </div>
+                            </div>
+                        </div><!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div><!-- /.main-content -->
+
+    </div><!-- /.main-container-inner -->
+
+
+</div><!-- /.main-container -->
+<div th:include="common/common_js :: onloadJS" ></div>
+</body>
+</html>
