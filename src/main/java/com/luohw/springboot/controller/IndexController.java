@@ -30,6 +30,11 @@ public class IndexController {
         return "admin/index";
     }
 
+    @RequestMapping(value = "/admin/home",method = RequestMethod.GET)
+    public String home(){
+        return "admin/home";
+    }
+
 
 
 }

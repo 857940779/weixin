@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luohw.springboot.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.luohw.springboot.dbentity.UserDO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="login" jdbcType="VARCHAR" property="login"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="loginNum" jdbcType="INTEGER" property="loginNum"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="email" jdbcType="INTEGER" property="email"/>
+        <result column="create_time"  property="createTime"/>
+        <result column="update_time"  property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, name, login, password, status, loginNum, mobile,email,create_time,update_time
+    </sql>
+
+    <select id="getPage" resultMap="BaseResultMap" parameterType="com.luohw.springboot.vo.request.UserRequestVO">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where status=1
+        <if test="keyword !=''">
+           and ( login like CONCAT('%',CONCAT(#{keyword},'%'))
+            or mobile like CONCAT('%',CONCAT(#{keyword},'%'))
+            or email like CONCAT('%',CONCAT(#{keyword},'%'))
+            )
+        </if>
+    </select>
+</mapper>
