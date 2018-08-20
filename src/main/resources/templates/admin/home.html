@@ -27,28 +27,46 @@
 
     <div class="content-wrapper" style="margin-left: 0px">
 
-
         <div class="row" style="margin-left: 3px;margin-right: 3px">
-            <!-- Left col -->
             <section class="col-sm-9 connectedSortable ui-sortable" style="margin-top: 3px">
                 <div class="row">
-
                     <div class="col-sm-4 ">
-
                         首页内容
-
                     </div>
                 </div>
-
             </section>
         </div>
 
+        <!-- 折线图-->
+        <div class="row" style="margin-left: 3px;margin-right: 3px">
+            <div class="box box-solid">
+                <div id="container" style="height: 500px"></div>
+            </div>
+        </div>
 
+        <!--柱状图-->
 
+        <div class="row" style="margin-left: 3px;margin-right: 3px">
+
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div id="batSourceBar" style="height:500px"></div>
+                </div>
+            </div>
+        </div>
+
+        <!--饼状图-->
+        <div class="row" style="margin-left: 3px;margin-right: 3px">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div id="piceBar" style="height:500px"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
-    </div>
+</div>
 </div>
 
 
@@ -58,14 +76,139 @@
 <!-- AdminLTE App -->
 <script th:src="@{/bootstrap/adminLTE/dists/js/adminlte.min.js}"></script>
 
-<script th:src="@{/bootstrap/echarts/distm/echarts.js}"></script>
-
-<!--<script th:src="@{/bootstrap/js/date-time/bootstrap-datetimepicker.js}"></script>-->
 <script th:src="@{/bootstrap/js/date-time/bootstrap-datepicker.js}"></script>
 
 <script th:src="@{/bootstrap/js/fas/fas.dateFormat.js}"></script>
 
+<script th:src="@{/bootstrap/echarts_1/echarts.min.js}"></script>
+<script th:src="@{/bootstrap/echarts_1/echarts-gl.min.js}"></script>
+<script th:src="@{/bootstrap/echarts_1/ecStat.min.js}"></script>
+<script th:src="@{/bootstrap/echarts_1/dataTool.min.js}"></script>
+<script th:src="@{/bootstrap/echarts_1/china.js}"></script>
+<script th:src="@{/bootstrap/echarts_1/world.js}"></script>
+<script th:src="@{/bootstrap/echarts_1/api.js}"></script>
+<script th:src="@{/bootstrap/echarts_1/bmap.min.js}"></script>
+<script th:src="@{/bootstrap/echarts_1/simplex.js}"></script>
+
 <script th:inline="javascript">
+    //折线图分三部分，第一部分是数据类型，第二部分是横坐标，可以是时间，第三部分就是综合数据，包含类型与时间及具体纵坐标的值。
+    //直接通过获取controller返回的model中的值来初始化，当然也可以发ajax请求。
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    option = null;
+    option = {
+        title: {
+            text: '折线图堆叠'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:[[${lineType}]]
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: [[${timeList}]]
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [[${lineData}]]
+    };
+
+    myChart.setOption(option, true);
+
+    //柱状图
+    var barDom = document.getElementById("batSourceBar");
+    var barChart = echarts.init(barDom);
+    var barOption = null;
+    barOption = {
+        title : {
+            text: '柱状图'
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:[[${barType}]]
+        },
+        //工具栏，可以切换为折线图
+        toolbox: {
+            show : true,
+            feature : {
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                data : [[${month}]]
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series:[[${barData}]]
+    };
+
+    barChart.setOption(barOption, true);
+
+    //饼状图
+    var piceDom = document.getElementById("piceBar");
+    var piceChart = echarts.init(piceDom);
+    var pickOption = null;
+
+    pickOption = {
+        title: {
+            text: '饼状图情况统计',
+            left: 'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            bottom: 10,
+            left: 'center',
+            data: [[${cityType}]]
+        },
+        series : [
+            {
+                type: 'pie',
+                radius : '65%',
+                center: ['50%', '50%'],
+                selectedMode: 'single',
+                data:[[${piceData}]],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    piceChart.setOption(pickOption, true);
 
 </script>
 
