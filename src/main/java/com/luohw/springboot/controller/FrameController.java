@@ -14,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -63,5 +66,30 @@ public class FrameController extends BaseController{
     @RequestMapping("/tabTest")
     public String tab(){
         return "framework/tab";
+    }
+
+
+    @RequestMapping("/upload")
+    public String upload(){
+        return "framework/upload";
+    }
+
+    //页面必须使用form表单，post形式，entype为multipartfile
+    @RequestMapping(value = "/uploadFile",method = RequestMethod.POST)
+    @ResponseBody
+    public String uploadFile(@RequestParam("file") MultipartFile file,@RequestParam("file2") MultipartFile file2,
+                             @RequestParam("file3") MultipartFile file3){
+        byte[] bytes=null;
+        byte[] bytes2=null;
+        byte[] bytes3=null;
+        try {
+            bytes = file.getBytes();
+            bytes2=file2.getBytes();
+            bytes3=file3.getBytes();
+            System.out.println(new String(bytes));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "上传成功";
     }
 }

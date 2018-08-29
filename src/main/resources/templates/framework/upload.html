@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head :: head"></head>
+<title>中移运营支撑系统-用户</title>
+<body class="no-skin">
+<div class="main-container" id="main-container">
+
+
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content" style="height: 0px;padding-bottom:30%">
+                <div class="row">
+
+                    <div class="col-xs-12 col-sm-12 widget-container-col">
+                        <div class="widget-box ">
+
+                            <div class="widget-body" style="margin-top: 20px">
+                                <div class="widget-main widget-main-padding">
+                                    <div class="clearfix">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+
+                                                <!--上传文件-->
+                                                <form method="POST" action="/frame/uploadFile" enctype="multipart/form-data">
+                                                    <input type="file" name="file" /><br/><br/>
+                                                    <input type="file" name="file2" /><br/><br/>
+                                                    <input type="file" name="file3" /><br/><br/>
+                                                    <input type="submit" value="Submit" />
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+        </div>
+    </div>
+</div>
+<div th:include="common/simple_js :: simpleJS"></div>
+<div th:include="common/datatable_js :: datatableJS"></div>
+<script th:src="@{/bootstrap/js/fas/fas.dateFormat.js}"></script>
+<script th:src="@{/bootstrap/js/date-time/moment.js}"></script>
+<script th:src="@{/bootstrap/js/date-time/bootstrap-datetimepicker.js}"></script><link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap-datetimepicker.css}" /><script th:src="@{/bootstrap/js/date-time/bootstrap-datetimepicker.zh-CN.js}"></script><script th:src="@{/bootstrap/js/bootstrap-select.js}"></script>
+<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap-select.css}"/>
+
+
+<script type="text/javascript" th:inline="javascript">
+
+    var requestUrl="/frame/page";
+
+    //页面初始化执行
+    jQuery(function ($) {
+    });
+
+    function addNew() {
+        $("#modal-form").modal("show"); //展示弹框
+
+//        $.ajax({
+//            type:"GET",
+//            url:requestUrl,
+//            data:{
+//                "mobile":$("#mobile").val()
+//            },
+//            success:function (data) {
+//                $("#showMobile").html($("#mobile").val());
+//
+//                if(data.status.toLowerCase()!="success"){
+//                    if(data.msg!=undefined && data.msg!=''){
+//                        window.alert(data.msg);
+//                    }
+//                }else {
+//                    var dataObj = data.data;
+//
+//                    $("#smsEnable").val(dataObj.smsEnable);
+//                    $("#barEnable").val(dataObj.barEnable);
+//                    $("#soundEnable").val(dataObj.soundEnable);
+//                    $("#shakeEnable").val(dataObj.shakeEnable);
+//                    $("#oaEnable").val(dataObj.oaEnable);
+//                    $("#emailEnable").val(dataObj.emailEnable);
+//                    $("#wifiEnable").val(dataObj.wifiEnable);
+//                    $("#fontSize").val(dataObj.fontSize);
+//                    $("#language").val(dataObj.language);
+//                }
+//
+//
+//            }
+//        })
+    }
+    
+
+</script>
+</div>
+</body>
+</html>
