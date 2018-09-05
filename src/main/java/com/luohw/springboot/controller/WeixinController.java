@@ -1,9 +1,11 @@
 package com.luohw.springboot.controller;
 
 
+import com.luohw.springboot.constant.TokenConstant;
 import com.luohw.springboot.service.MessageService;
 import com.luohw.springboot.service.WeixinService;
 import com.luohw.springboot.util.SignUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,8 @@ public class WeixinController {
     MessageService messageService;
     @Autowired
     WeixinService weixinService;
+    @Autowired
+    TokenConstant tokenConstant;
 
     /**
      * 测试数据
@@ -155,10 +159,10 @@ public class WeixinController {
     @RequestMapping(value = "/token",method = RequestMethod.GET)
     @ResponseBody
     public String getToken(){
-        if(weixinService.getToken()){
-            return "success";
-        }else {
-            return "fail,see the console";
+        if(StringUtils.isEmpty(tokenConstant.getWeiToken())){
+            tokenConstant.setWeiToken(weixinService.getWeixinToken());
         }
+        return "success,see the console,token--"+tokenConstant.getWeiToken();
+
     }
 }

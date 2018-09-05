@@ -7,4 +7,6 @@ public interface WeixinService {
     boolean delMenu();
 
     boolean getToken();
+
+    String getWeixinToken();
 }

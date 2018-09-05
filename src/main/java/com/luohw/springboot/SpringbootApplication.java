@@ -1,16 +1,21 @@
 package com.luohw.springboot;
 
+import com.luohw.springboot.constant.TokenConstant;
+import com.luohw.springboot.filter.InitFilter;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 //import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
 //@EnableEurekaClient
+@EnableScheduling
 @MapperScan("com.luohw.springboot.mapper")  //扫描mapper接口
 public class SpringbootApplication {
 
@@ -30,4 +35,16 @@ public class SpringbootApplication {
 		});
 		return tomcat;
 	}
+
+	@Bean
+	public FilterRegistrationBean testFilterrRegistrationBean() {
+		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+		filterRegistrationBean.setFilter(new InitFilter());
+		filterRegistrationBean.setOrder(1);
+		filterRegistrationBean.setEnabled(true);
+		filterRegistrationBean.addUrlPatterns("/*");
+
+		return filterRegistrationBean;
+	}
+
 }

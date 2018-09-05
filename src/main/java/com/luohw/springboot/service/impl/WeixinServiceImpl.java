@@ -1,9 +1,11 @@
 package com.luohw.springboot.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.luohw.springboot.constant.WeixinConstant;
 import com.luohw.springboot.po.CreateMenuPO;
 import com.luohw.springboot.po.FirstMenuPO;
 import com.luohw.springboot.po.SecondMenuPO;
+import com.luohw.springboot.po.TokenPO;
 import com.luohw.springboot.service.WeixinService;
 import com.luohw.springboot.util.HttpClientUtil;
 import org.apache.http.HttpEntity;
@@ -110,6 +112,27 @@ public class WeixinServiceImpl implements WeixinService{
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public String getWeixinToken() {
+        String url=WeixinConstant.TOKEN_URL;
+        url= MessageFormat.format(url, WeixinConstant.GRANT_TYPE,WeixinConstant.APPID,WeixinConstant.SECRET);
+
+        try {
+            HttpResponse httpResponse=HttpClientUtil.get(url,null);
+
+            InputStream inputStream=httpResponse.getEntity().getContent();
+            int length=inputStream.available();
+            byte[] bytes=new byte[length];
+            inputStream.read(bytes);
+            String str=new String(bytes);
+            TokenPO tokenPO=JSON.parseObject(str,TokenPO.class);
+            return tokenPO.getAccess_token();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
