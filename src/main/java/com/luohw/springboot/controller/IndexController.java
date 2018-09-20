@@ -24,8 +24,10 @@ public class IndexController {
 
     //这个效果等同于上面的GetMapping注解
     @RequestMapping(value="/admin/index",method = RequestMethod.GET)
-    public String adminIndex(Model model){
-        String menuTree = menuServcie.getMeneuTree();  //页面初始化加载左侧菜单树
+    public String adminIndex(Model model,String roleId){
+        //TODO  正常登陆，需要根据用户信息查询用户角色id，然后获取菜单
+
+        String menuTree = menuServcie.getMenuTreeByRoleId(roleId);  //页面初始化加载左侧菜单树
         model.addAttribute("message", menuTree);
         return "admin/index";
     }

@@ -32,4 +32,14 @@ public class LoginController {
         return result;    //转发url到Index做页面初始化用
 
     }
+
+    @RequestMapping(value = "/loginByType",method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult loginByType(String roleId){
+        JsonResult<Object> result = new JsonResult<>();
+        //用户密码校验
+        result.setStatus(StatusCode.SUCCESS);
+        result.setData("/admin/index?roleId="+roleId);   //转发url到Index做页面初始化用
+        return result;
+    }
 }

@@ -12,7 +12,6 @@ public class InitFilter implements Filter{
 
     }
 
-    //初始化时，需要获取token
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         filterChain.doFilter(servletRequest,servletResponse);

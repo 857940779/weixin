@@ -1,6 +1,5 @@
 package com.luohw.springboot;
 
-import com.luohw.springboot.constant.TokenConstant;
 import com.luohw.springboot.filter.InitFilter;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.mybatis.spring.annotation.MapperScan;
@@ -11,10 +10,8 @@ import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletCon
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-//import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
-//@EnableEurekaClient
 @EnableScheduling
 @MapperScan("com.luohw.springboot.mapper")  //扫描mapper接口
 public class SpringbootApplication {

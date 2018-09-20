@@ -14,9 +14,9 @@ public class TokenTask {
     WeixinService weixinService;
 
     //每两个小时更新一次token
-    @Scheduled(cron = "* * */2  * * ?")
-    public void sendingMessage() {
-        System.out.println("------------token自动刷新------------");
-        tokenConstant.setWeiToken(weixinService.getWeixinToken());
-    }
+//    @Scheduled(cron = "* * */2  * * ?")
+//    public void sendingMessage() {
+//        System.out.println("------------token自动刷新------------");
+//        tokenConstant.setWeiToken(weixinService.getWeixinToken());
+//    }
 }

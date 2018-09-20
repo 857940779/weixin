@@ -22,4 +22,22 @@
         from menu
         WHERE available=1
     </select>
+
+    <select id="getMenuByFirstMenuId" resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        <include refid="Base_Column_List"/>
+        from menu
+        WHERE available=1 and
+        id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+        #{item}
+        </foreach>
+        or
+        parent_id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+        #{item}
+        </foreach>
+
+        order by id asc;
+    </select>
 </mapper>

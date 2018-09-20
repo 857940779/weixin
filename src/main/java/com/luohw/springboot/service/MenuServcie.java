@@ -17,4 +17,11 @@ public interface MenuServcie {
      * @return
      */
     String getMeneuTree();
+
+    /**
+     * 根据角色id获取菜单
+     * @param roleId
+     * @return
+     */
+    String getMenuTreeByRoleId(String roleId);
 }
