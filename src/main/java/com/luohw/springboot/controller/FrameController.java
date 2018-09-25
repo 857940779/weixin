@@ -37,7 +37,7 @@ public class FrameController extends BaseController{
     /**
      * 这个前端的datatable分页插件不太好用，每次请求都要送一大堆分页查询，而且还要返回，以便下一页使用
      * 请求方式还必须是post
-     * 后端分页用的是pagehelper，在startPage后，要马上接你分页的sql，要是又其他sql，会导致分页失败的
+     * 后端分页用的是pagehelper，在startPage后，要马上接你分页的sql，要是有其他sql，会导致分页失败的
      * @param userRequestVO
      * @return
      */
